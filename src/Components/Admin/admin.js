@@ -13,39 +13,48 @@ const Admin = () => {
     const fetchAdminStatusAndPrice = async () => {
       setLoading(true);
 
-      // Ensure the user is logged in
-      const user = auth.currentUser;
-      if (!user) {
-        alert("Unauthorized Access. Please login.");
-        navigate("/login"); // Redirect to login page
-        return;
-      }
+      try {
+        // Ensure the user is logged in
+        const user = auth.currentUser;
+        if (!user) {
+          alert("Unauthorized Access. Please login.");
+          navigate("/login"); // Redirect to login page
+          return;
+        }
 
-      // Fetch user details from Firestore
-      const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
+        // Fetch user details from Firestore
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
 
-      if (userDoc.exists()) {
-        const userData = userDoc.data();
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
 
-        // Check if the user is an admin
-        if (userData.isAdmin) {
-          // Fetch the current price from Firestore
-          const priceDocRef = doc(db, "price", "currentPrice");
-          const priceDoc = await getDoc(priceDocRef);
+          // Check if the user is an admin
+          if (userData.isAdmin) {
+            // Fetch the current price from Firestore
+            const priceDocRef = doc(db, "price", "currentPrice");
+            const priceDoc = await getDoc(priceDocRef);
 
-          if (priceDoc.exists()) {
-            setPricePerKm(priceDoc.data().pricePerKm.toString());
+            if (priceDoc.exists()) {
+              setPricePerKm(priceDoc.data().pricePerKm.toString());
+            } else {
+              setPricePerKm(""); // Set to empty if no price is found
+            }
           } else {
-            setPricePerKm(""); // Set to empty if no price is found
+            alert("Unauthorized Access");
+            navigate("/"); // Redirect non-admin users to the homepage
           }
         } else {
-          alert("Unauthorized Access");
-          navigate("/"); // Redirect non-admin users to the homepage
+          alert("User not found");
+          navigate("/"); // Redirect if user details are missing
         }
-      } else {
-        alert("User not found");
-        navigate("/"); // Redirect if user details are missing
+      } catch (error) {
+        if (error.code === "permission-denied") {
+          alert("You do not have permission to access this data.");
+        } else {
+          console.error("Error fetching admin status or price:", error);
+          alert("An unexpected error occurred. Please try again.");
+        }
       }
 
       setLoading(false);
@@ -66,8 +75,12 @@ const Admin = () => {
       await setDoc(priceDocRef, { pricePerKm: Number(pricePerKm) });
       alert("Price updated successfully!");
     } catch (error) {
-      console.error("Error updating price:", error);
-      alert("Failed to update price. Please try again.");
+      if (error.code === "permission-denied") {
+        alert("You do not have permission to update the price.");
+      } else {
+        console.error("Error updating price:", error);
+        alert("Failed to update price. Please try again.");
+      }
     }
   };
 

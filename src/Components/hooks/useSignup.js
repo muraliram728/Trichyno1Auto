@@ -1,34 +1,37 @@
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { useState } from "react";
 import { auth, db } from "../../firebase/config";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 export const useSignup = () => {
   const [error, setError] = useState(null);
 
-  const signup = ({ fname, lname, email, password, isAdmin = false }) => {
+  const signup = async ({ fname, lname, email, password, isAdmin = false }) => {
     setError(null);
 
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((response) => {
-        const user = response.user;
-        const docRef = doc(db, "users", user.uid);
+    try {
+      // Create user in Firebase Auth
+      const response = await createUserWithEmailAndPassword(auth, email, password);
+      const user = response.user;
 
-        // Save user details in Firestore, including isAdmin flag
-        setDoc(docRef, {
-          fname,
-          lname,
-          email,
-          isAdmin, // Admin flag
-          createdAt: new Date(),
-        });
+      // Update display name in Firebase Auth
+      await updateProfile(user, { displayName: `${fname} ${lname}` });
 
-        console.log("User created with UID:", user.uid);
-      })
-      .catch((error) => {
-        console.log(error.message);
-        setError(error.message);
+      // Save user details in Firestore
+      const docRef = doc(db, "users", user.uid);
+      await setDoc(docRef, {
+        fname,
+        lname,
+        email,
+        isAdmin : false, // Admin flag
+        createdAt: serverTimestamp(), // Server-generated timestamp
       });
+
+      console.log("User successfully signed up and signed in:", user.uid);
+    } catch (err) {
+      console.error("Signup error:", err.message);
+      setError(err.message);
+    }
   };
 
   return { signup, error };
