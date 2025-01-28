@@ -1,0 +1,40 @@
+/* Global Footer Styles */
+.Footer {
+    background-color: #fae208; /* Light gray background color */
+    padding: 20px; /* Add space inside the box */
+    height: 150px; /* Fixed height */
+    width: 100%; /* Ensure it takes full width */
+    position: relative; /* Required for positioning within the page */
+}
+
+/* Large Screens (Laptop / PC) */
+@media screen and (min-width: 1024px) {
+    .Footer {
+        padding: 20px; /* Maintain larger padding for laptops and PCs */
+        height: 150px; /* Keep the height as it is */
+    }
+}
+
+/* Tablets and smaller laptops (between 768px and 1023px) */
+@media screen and (max-width: 1023px) and (min-width: 768px) {
+    .Footer {
+        padding: 18px; /* Slightly reduce padding */
+        height: 130px; /* Reduce height for tablets */
+    }
+}
+
+/* Small Tablets and Portrait Tablets (less than 768px) */
+@media screen and (max-width: 768px) {
+    .Footer {
+        padding: 15px; /* Reduce padding */
+        height: 120px; /* Reduce height */
+    }
+}
+
+/* Mobile devices (Phones: Android / iPhone) */
+@media screen and (max-width: 320px) {
+    .Footer {
+        padding: 10px; /* Further reduce padding */
+        height: 100px; /* Further reduce height */
+    }
+}

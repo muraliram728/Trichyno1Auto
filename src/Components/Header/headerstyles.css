@@ -1,0 +1,165 @@
+a {
+    text-decoration: none;
+}
+
+header {
+    background-color:rgb(45, 41, 41);
+    height: 95px;
+    position: relative;
+}
+h2{
+    color: #ffffff;
+    margin-top: 5px;
+}
+
+.highlight-word-color{
+    color: var(--main-color);
+}
+.Horizontal-Line{
+    height: 1px;
+    background-color: #ffffff;
+    position: absolute;
+    margin-top: 17px;
+    left: 0;
+    right: 0;
+}
+
+.Container {
+    max-width: 1440px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.Container nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.Container nav .logo {
+    color: #212a3c;
+    font-size: 1.2rem;
+    cursor: pointer;
+}
+
+.Container .nav-link {
+    display: flex;
+    margin-top: 10px;
+}
+
+.Container .nav-link li {
+    list-style: none;
+    margin: 0.5rem;
+}
+
+.Container ul li a {
+    color: #ffffff;
+    padding: 0.7rem 1rem;
+    display: block;
+    border-radius: 10px;
+}
+
+.Container ul li a:hover,
+.Container ul li a.active {
+    font-weight: 1000;
+    color: var(--main-color) !important;
+}
+
+.content {
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, 0%);
+}
+
+.icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: none;
+}
+
+.logout-container {
+    margin-left: auto; /* This will push the logout button to the right */
+  }
+
+/* Banner Container */
+.banner {
+    position: relative;
+    width: 100%;
+}
+
+.banner-image {
+    width: 100%; 
+    height: 200px;
+    object-fit: cover;
+    filter: brightness(0.5);
+}
+
+.banner-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffff;
+    text-align: center;
+}
+
+.banner-text h1 {
+    font-size: 2.5rem; /* Main heading size */
+    margin-bottom: 0.5rem;
+}
+
+.banner-text p {
+    font-size: 1.2rem; /* Subheading size */
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .content h2 {
+        font-size: 4rem;
+        text-align: center;
+    }
+
+    .icon {
+        color: white;
+        display: block;
+        margin-top: 26px;
+    }
+
+    .Container .nav-link {
+        flex-direction: column;
+        justify-content: space-evenly;
+        background-color: #a7a4a4;
+        position: absolute;
+        width: 280px;
+        height: 60vh;
+        top: -800px;
+        left: 0;
+        z-index: 10;
+        transition: all 0.7s;
+        margin-top: 36px;
+    }
+
+    .nav-link.active{
+        top: 70%;
+        transition: all 0.7s ease-in;
+    }
+
+    .banner-image {
+        height: 180px; /* Further reduce image height */
+    }
+
+    .banner-text h1 {
+        font-size: 20px; 
+    }
+
+    .banner-text h2 {
+        font-size: 10px; 
+    }
+
+    .banner-text p {
+        font-size: 6px; 
+    }
+    
+}
