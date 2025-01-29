@@ -55,46 +55,47 @@ const TripTracker = () => {
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
-
+  
+    let previousPosition = null; // Use a local variable instead of state
+  
     const id = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         console.log("New Position:", latitude, longitude);
-
-        setLastPosition((prevPosition) => {
-          if (!prevPosition) {
-            return { lat: latitude, lon: longitude }; // First position
-          }
-
-          // Calculate the distance from the last position
-          const dist = calculateDistance(
-            prevPosition.lat,
-            prevPosition.lon,
-            latitude,
-            longitude
-          );
-
-          if (dist > 0.1) { // Ignore small movements (less than 10 cm)
-            console.log(`Distance updated by: ${dist.toFixed(2)} meters`);
-            setDistance((prev) => prev + dist / 1000); // Convert meters to km
-            setAmount((prevAmount) => prevAmount + (dist / 1000) * pricePerKm);
-          }
-
-          return { lat: latitude, lon: longitude }; // Update last position
-        });
+  
+        if (!previousPosition) {
+          previousPosition = { lat: latitude, lon: longitude };
+          return;
+        }
+  
+        // Calculate the distance from the last position
+        const dist = calculateDistance(
+          previousPosition.lat,
+          previousPosition.lon,
+          latitude,
+          longitude
+        );
+  
+        if (dist > 1) { // Ignore movements less than 1 meter
+          console.log(`Distance updated by: ${dist.toFixed(2)} meters`);
+          setDistance((prev) => prev + dist / 1000); // Convert meters to km
+          setAmount((prevAmount) => prevAmount + (dist / 1000) * pricePerKm);
+          previousPosition = { lat: latitude, lon: longitude }; // Update last position
+        }
       },
       (error) => console.error("Geolocation error:", error),
       { enableHighAccuracy: true, maximumAge: 500, distanceFilter: 1 }
     );
-
+  
     setWatchId(id);
-
+  
     // Start time counter and store the interval ID
     const interval = setInterval(() => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
   };
+  
 
   // Stop trip
   const stopTrip = async () => {
