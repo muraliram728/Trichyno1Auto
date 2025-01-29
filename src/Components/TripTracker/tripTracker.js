@@ -55,12 +55,13 @@ const TripTracker = () => {
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
+    let isFirstUpdate = true; // Ignore the first GPS update
   
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
       timeout: 20000,
-      distanceFilter: 10, 
+      distanceFilter: 5, // Reduce to 5m for smoother updates
     };
   
     const id = navigator.geolocation.watchPosition(
@@ -69,16 +70,22 @@ const TripTracker = () => {
         console.log("New Position:", latitude, longitude);
   
         setLastPosition((prevPosition) => {
+          if (isFirstUpdate) {
+            console.log("Ignoring first GPS update...");
+            isFirstUpdate = false;
+            return { lat: latitude, lon: longitude };
+          }
+  
           if (!prevPosition) return { lat: latitude, lon: longitude };
   
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
   
-          if (dist > 1000) {
+          if (dist > 1000) { // Ignore GPS errors causing large jumps
             console.warn("Ignoring unrealistic GPS jump:", dist);
             return prevPosition;
           }
   
-          if (dist >= 10) { // Only count movements ≥ 10 meters
+          if (dist >= 5) { // Update only if movement is ≥ 5 meters
             console.log(`Distance updated by: ${dist.toFixed(2)} meters`);
             setDistance((prev) => prev + dist / 1000);
             setAmount((prevAmount) => prevAmount + (dist / 1000) * pricePerKm);
@@ -98,6 +105,7 @@ const TripTracker = () => {
     }, 1000);
     setTimerId(interval);
   };
+  
 
   // Stop trip
   const stopTrip = async () => {
