@@ -8,6 +8,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/login/Login';
 import Signup from './Components/signup/Signup';
 import Cost from './Components/Cost/cost';
+import TripTracker from './Components/TripTracker/tripTracker';
 
 function App() {
   return (
@@ -21,7 +22,7 @@ function App() {
             <Route path="/signup" element={<Signup />} />
             <Route path="/admin" element={<Admin />} /> {/* Admin Page */}
             <Route path="/cost" element={<Cost />} /> {/* Admin Page */}
-
+            <Route path="/triptracker" element={<TripTracker />} />
           </Routes>
         </div>
         {/* <Footer /> */}

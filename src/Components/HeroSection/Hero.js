@@ -20,6 +20,10 @@ const Hero = () => {
   const handleCostClick = () => {
     navigate('/cost'); // Navigate to the admin page
   };
+
+  const handleTripTrackerClick = () => {
+    navigate('/TripTracker'); // Navigate to the admin page
+  };
   
   return (
     <div className="hero">
@@ -35,8 +39,8 @@ const Hero = () => {
           <p>Safe</p>
         </div>
         <div className="image-container">
-          <img src={auto} alt="Auto" />
-          <p>Auto</p>
+          <img src={auto} alt="Auto" onClick={handleTripTrackerClick}/>
+          <p>TripTracker</p>
         </div>
         <div className="image-container">
           <img src={service} alt="Service" />
