@@ -139,30 +139,26 @@ const TripTracker = () => {
     };
   
     // Stop trip and calculate total fare
-const stopTrip = () => {
-    if (watchId) navigator.geolocation.clearWatch(watchId); // Stop geolocation watch
-    if (timerId) clearInterval(timerId); // Clear the time interval
-    
-    const totalFare = (amount + totalWaitingFee).toFixed(2);
-    setAmount(amount + totalWaitingFee);
-    setIsRunning(false);
-    setDistance(0);
-    setTime(0);
-    setTotalWaitingFee(0);
-  };
+    const stopTrip = () => {
+        if (watchId) navigator.geolocation.clearWatch(watchId); // Stop geolocation watch
+        if (timerId) clearInterval(timerId); // Clear the time interval
+        
+        // Just set the trip to stop without modifying amount again
+        setIsRunning(false);
+        setDistance(0);
+        setTime(0);
+    };
 
     return (
       <div>
         <h2>Trip Tracker</h2>
         <p>Price per km: ₹{pricePerKm}</p>
-        <p>Time: {new Date(time * 1000).toISOString().substr(11, 8)}</p>
+        <p>Trip Time: {new Date(time * 1000).toISOString().substr(11, 8)}</p>
         <p>Distance: {Math.floor(distance)} km {Math.round((distance % 1) * 1000)} meters</p>
-        <p>Amount: ₹{amount.toFixed(2)}</p>
+        <p>Distance Amount: ₹{amount.toFixed(2)}</p>
         <p>Waiting Time: {Math.floor(waitingTimeInSeconds / 60)} minutes {waitingTimeInSeconds % 60} seconds</p>
         <p>Total Waiting Fee: ₹{totalWaitingFee.toFixed(2)}</p>
   
-        <h3>Total Fare: ₹{(amount + totalWaitingFee).toFixed(2)}</h3>
-
         {!isRunning ? (
           <button onClick={startTrip}>Start Trip</button>
         ) : (
@@ -175,6 +171,10 @@ const stopTrip = () => {
             <button onClick={stopWaiting}>Stop Waiting</button>
           </div>
         )}
+
+        <h3>Total Fare: ₹{(amount + totalWaitingFee).toFixed(2)}</h3>
+
+
       </div>
     );
 };
