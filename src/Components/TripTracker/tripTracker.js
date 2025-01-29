@@ -56,19 +56,19 @@ const TripTracker = () => {
     setAmount(0);
     setLastPosition(null);
   
-    let previousPosition = null; // Use a local variable instead of state
+    let previousPosition = null; // Local variable for tracking last position
   
     const id = navigator.geolocation.watchPosition(
       (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log("New Position:", latitude, longitude);
+        const { latitude, longitude, accuracy } = position.coords;
+        console.log(`New Position: ${latitude}, ${longitude}, Accuracy: ${accuracy} meters`);
   
         if (!previousPosition) {
           previousPosition = { lat: latitude, lon: longitude };
           return;
         }
   
-        // Calculate the distance from the last position
+        // Calculate the distance from the last known position
         const dist = calculateDistance(
           previousPosition.lat,
           previousPosition.lon,
@@ -76,7 +76,8 @@ const TripTracker = () => {
           longitude
         );
   
-        if (dist > 1) { // Ignore movements less than 1 meter
+        // Ignore small movements (below 3 meters)
+        if (dist > 3) { 
           console.log(`Distance updated by: ${dist.toFixed(2)} meters`);
           setDistance((prev) => prev + dist / 1000); // Convert meters to km
           setAmount((prevAmount) => prevAmount + (dist / 1000) * pricePerKm);
@@ -84,7 +85,7 @@ const TripTracker = () => {
         }
       },
       (error) => console.error("Geolocation error:", error),
-      { enableHighAccuracy: true, maximumAge: 500, distanceFilter: 1 }
+      { enableHighAccuracy: true, maximumAge: 1000, distanceFilter: 3 }
     );
   
     setWatchId(id);
@@ -95,6 +96,7 @@ const TripTracker = () => {
     }, 1000);
     setTimerId(interval);
   };
+  
   
 
   // Stop trip
@@ -125,7 +127,7 @@ const TripTracker = () => {
       <h2>Trip Tracker</h2>
       <p>Price per km: ₹{pricePerKm}</p>
       <p>Time: {new Date(time * 1000).toISOString().substr(11, 8)}</p>
-      <p>Distance: {distance.toFixed(3)} km</p>
+      <p>Distance: {Math.floor(distance)} km {Math.round((distance % 1) * 1000)} meters</p>
       <p>Amount: ₹{amount.toFixed(2)}</p>
 
       {!isRunning ? (
