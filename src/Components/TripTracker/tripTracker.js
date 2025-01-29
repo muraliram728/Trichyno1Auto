@@ -56,48 +56,48 @@ const TripTracker = () => {
     setAmount(0);
     setLastPosition(null);
   
-    let previousPosition = null; // Local variable for tracking last position
+    const options = {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 20000,
+      distanceFilter: 10, 
+    };
   
     const id = navigator.geolocation.watchPosition(
       (position) => {
-        const { latitude, longitude, accuracy } = position.coords;
-        console.log(`New Position: ${latitude}, ${longitude}, Accuracy: ${accuracy} meters`);
+        const { latitude, longitude } = position.coords;
+        console.log("New Position:", latitude, longitude);
   
-        if (!previousPosition) {
-          previousPosition = { lat: latitude, lon: longitude };
-          return;
-        }
+        setLastPosition((prevPosition) => {
+          if (!prevPosition) return { lat: latitude, lon: longitude };
   
-        // Calculate the distance from the last known position
-        const dist = calculateDistance(
-          previousPosition.lat,
-          previousPosition.lon,
-          latitude,
-          longitude
-        );
+          const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
   
-        // Ignore small movements (below 3 meters)
-        if (dist > 3) { 
-          console.log(`Distance updated by: ${dist.toFixed(2)} meters`);
-          setDistance((prev) => prev + dist / 1000); // Convert meters to km
-          setAmount((prevAmount) => prevAmount + (dist / 1000) * pricePerKm);
-          previousPosition = { lat: latitude, lon: longitude }; // Update last position
-        }
+          if (dist > 1000) {
+            console.warn("Ignoring unrealistic GPS jump:", dist);
+            return prevPosition;
+          }
+  
+          if (dist >= 10) { // Only count movements ≥ 10 meters
+            console.log(`Distance updated by: ${dist.toFixed(2)} meters`);
+            setDistance((prev) => prev + dist / 1000);
+            setAmount((prevAmount) => prevAmount + (dist / 1000) * pricePerKm);
+          }
+  
+          return { lat: latitude, lon: longitude };
+        });
       },
       (error) => console.error("Geolocation error:", error),
-      { enableHighAccuracy: true, maximumAge: 1000, distanceFilter: 3 }
+      options
     );
   
     setWatchId(id);
   
-    // Start time counter and store the interval ID
     const interval = setInterval(() => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
   };
-  
-  
 
   // Stop trip
   const stopTrip = async () => {
