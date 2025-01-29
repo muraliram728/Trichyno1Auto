@@ -41,10 +41,9 @@ const TripTracker = () => {
         Math.sin(dLon / 2);
   
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distanceInMeters = R * c * 1000; // Distance in meters
+    const distanceInMeters = R * c * 1000; // Convert to meters
   
     console.log(`Calculated Distance: ${distanceInMeters.toFixed(2)} meters`);
-  
     return distanceInMeters;
   };
   
@@ -60,7 +59,7 @@ const TripTracker = () => {
       enableHighAccuracy: true,
       maximumAge: 0,
       timeout: 20000,
-      distanceFilter: 5, // Reduce to 5m for smoother updates
+      distanceFilter: 2, // Reduce for more frequent updates
     };
   
     const id = navigator.geolocation.watchPosition(
@@ -69,30 +68,34 @@ const TripTracker = () => {
         console.log("New Position:", latitude, longitude);
   
         setLastPosition((prevPosition) => {
-          // Ignore the first GPS update
           if (isFirstUpdate) {
             console.log("Ignoring first GPS update...");
             isFirstUpdate = false;
             return { lat: latitude, lon: longitude };
           }
   
-          // Proceed with distance calculation after the first update
           if (!prevPosition) return { lat: latitude, lon: longitude };
   
-          // Calculate distance from the previous position
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
   
-          if (dist > 0) {
-            console.log(`Movement detected. Calculated distance: ${dist.toFixed(2)} meters`);
+          if (dist > 0.5) { // Even small movements should count
+            console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
   
-            // Update distance and amount if movement is above the minimum threshold
-            if (dist >= 5) { // Update only if movement is ≥ 5 meters
-              setDistance((prev) => prev + dist / 1000); // Convert meters to kilometers
-              setAmount((prevAmount) => prevAmount + (dist / 1000) * pricePerKm);
-            }
+            // Updating distance correctly
+            setDistance((prev) => {
+              const newDistance = prev + dist / 1000; // Convert meters to km
+              console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+              return newDistance;
+            });
+  
+            // Updating amount correctly
+            setAmount((prevAmount) => {
+              const newAmount = prevAmount + (dist / 1000) * 50; // ₹50 per km
+              console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
+              return newAmount;
+            });
           }
   
-          // Update the last position
           return { lat: latitude, lon: longitude };
         });
       },
@@ -108,6 +111,7 @@ const TripTracker = () => {
     }, 1000);
     setTimerId(interval);
   };
+  
 
   // Stop trip
   const stopTrip = async () => {
