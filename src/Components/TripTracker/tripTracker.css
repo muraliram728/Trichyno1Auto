@@ -1,0 +1,78 @@
+.trip-tracker {
+    max-width: 450px;
+    margin: 40px auto;
+    padding: 25px;
+    border-radius: 12px;
+    background: rgb(45, 41, 41);
+    color: white;
+    font-family: "Poppins", sans-serif;
+    box-shadow: 0px 4px 10px rgba(255, 255, 0, 0.3);
+  }
+  
+  .trip-tracker h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-bottom: 2px solid rgba(255, 255, 0, 0.7);
+    padding-bottom: 10px;
+    text-align: center;
+  }
+  
+  .trip-detail {
+    display: flex;
+    justify-content: space-between;
+    font-size: 18px;
+    margin: 8px 0;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+  }
+  
+  .trip-detail .label {
+    text-align: left;
+  }
+  
+  .trip-detail .value {
+    text-align: right;
+    font-weight: bold;
+  }
+  
+  .trip-tracker button {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    font-size: 16px;
+    font-weight: bold;
+    border: 2px solid yellow;
+    background: yellow;
+    color: black;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+  }
+  
+  .trip-tracker button:hover {
+    background: white;
+    color: black;
+  }
+  
+  .waiting-buttons {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .waiting-buttons button {
+    flex: 1;
+    margin: 5px;
+  }
+  
+  .fare {
+    font-size: 20px;
+    font-weight: bold;
+    background: rgba(255, 255, 0, 0.2);
+    padding: 12px;
+    border-radius: 10px;
+    text-align: right;
+  }
+  

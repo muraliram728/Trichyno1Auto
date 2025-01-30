@@ -6,6 +6,7 @@ import "./AdminStyle.css";
 
 const Admin = () => {
   const [pricePerKm, setPricePerKm] = useState("");
+  const [waitingFee, setWaitingFee] = useState(""); // ✅ Fixed state name
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
@@ -14,47 +15,42 @@ const Admin = () => {
       setLoading(true);
 
       try {
-        // Ensure the user is logged in
         const user = auth.currentUser;
         if (!user) {
           alert("Unauthorized Access. Please login.");
-          navigate("/login"); // Redirect to login page
+          navigate("/login");
           return;
         }
 
-        // Fetch user details from Firestore
         const userDocRef = doc(db, "users", user.uid);
         const userDoc = await getDoc(userDocRef);
 
         if (userDoc.exists()) {
           const userData = userDoc.data();
 
-          // Check if the user is an admin
           if (userData.isAdmin) {
-            // Fetch the current price from Firestore
             const priceDocRef = doc(db, "price", "currentPrice");
             const priceDoc = await getDoc(priceDocRef);
 
             if (priceDoc.exists()) {
-              setPricePerKm(priceDoc.data().pricePerKm.toString());
+              const data = priceDoc.data();
+              setPricePerKm(data.pricePerKm.toString() || ""); // ✅ Ensure string format
+              setWaitingFee(data.waitingFee?.toString() || ""); // ✅ Fetch waiting fee
             } else {
-              setPricePerKm(""); // Set to empty if no price is found
+              setPricePerKm("");
+              setWaitingFee(""); // ✅ Initialize waiting fee
             }
           } else {
             alert("Unauthorized Access");
-            navigate("/"); // Redirect non-admin users to the homepage
+            navigate("/");
           }
         } else {
           alert("User not found");
-          navigate("/"); // Redirect if user details are missing
+          navigate("/");
         }
       } catch (error) {
-        if (error.code === "permission-denied") {
-          alert("You do not have permission to access this data.");
-        } else {
-          console.error("Error fetching admin status or price:", error);
-          alert("An unexpected error occurred. Please try again.");
-        }
+        console.error("Error fetching admin data:", error);
+        alert("An error occurred. Please try again.");
       }
 
       setLoading(false);
@@ -63,24 +59,24 @@ const Admin = () => {
     fetchAdminStatusAndPrice();
   }, [navigate]);
 
-  // Save price to Firestore
+  // ✅ Update Firestore with both price and waiting fee
   const handlePriceChange = async () => {
-    if (pricePerKm.trim() === "") {
-      alert("Please enter a valid price");
+    if (pricePerKm.trim() === "" || waitingFee.trim() === "") {
+      alert("Please enter valid values for both fields");
       return;
     }
 
     try {
-      const priceDocRef = doc(db, "price", "currentPrice"); // Document ID: currentPrice
-      await setDoc(priceDocRef, { pricePerKm: Number(pricePerKm) });
-      alert("Price updated successfully!");
+      const priceDocRef = doc(db, "price", "currentPrice");
+      await setDoc(priceDocRef, {
+        pricePerKm: Number(pricePerKm),
+        waitingFee: Number(waitingFee), // ✅ Store waiting fee in Firestore
+      });
+
+      alert("Price and Waiting Fee updated successfully!");
     } catch (error) {
-      if (error.code === "permission-denied") {
-        alert("You do not have permission to update the price.");
-      } else {
-        console.error("Error updating price:", error);
-        alert("Failed to update price. Please try again.");
-      }
+      console.error("Error updating values:", error);
+      alert("Failed to update. Please try again.");
     }
   };
 
@@ -98,8 +94,18 @@ const Admin = () => {
           placeholder="e.g., 10"
         />
       </label>
+      <label>
+        Waiting Fee per minute:
+        <input
+          type="number"
+          value={waitingFee} // ✅ Fixed value binding
+          onChange={(e) => setWaitingFee(e.target.value)} // ✅ Fixed onChange
+          placeholder="e.g., 2"
+        />
+      </label>
       <button onClick={handlePriceChange}>Set Price</button>
       <p>Current Price: {pricePerKm ? `${pricePerKm} Rs/km` : "Not set"}</p>
+      <p>Current Waiting Fee: {waitingFee ? `${waitingFee} Rs/min` : "Not set"}</p>
     </div>
   );
 };
