@@ -11,6 +11,7 @@ const TripTracker = () => {
     const [watchId, setWatchId] = useState(null);
     const [timerId, setTimerId] = useState(null);
     const [waitingFee, setWaitingFee] = useState(0);
+    const [lastPosition, setLastPosition] = useState(null);
     
     const [waitingTimeInSeconds, setWaitingTimeInSeconds] = useState(0); // Track waiting time in seconds
     const [totalWaitingFee, setTotalWaitingFee] = useState(0); // Track total waiting fee
@@ -54,68 +55,89 @@ const TripTracker = () => {
     }, []);
   
     // Function to calculate distance between two coordinates (Haversine Formula)
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-      const R = 6371; // Radius of Earth in km
-      const dLat = (lat2 - lat1) * (Math.PI / 180);
-      const dLon = (lon2 - lon1) * (Math.PI / 180);
-    
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(lat1 * (Math.PI / 180)) *
-          Math.cos(lat2 * (Math.PI / 180)) *
-          Math.sin(dLon / 2) *
-          Math.sin(dLon / 2);
-    
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      const distanceInMeters = R * c * 1000; // Convert to meters
-    
-      console.log(`Calculated Distance: ${distanceInMeters.toFixed(2)} meters`);
-      return distanceInMeters;
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of Earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+  
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+  
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    const distanceInMeters = R * c * 1000; // Convert to meters
+  
+    console.log(`Calculated Distance: ${distanceInMeters.toFixed(2)} meters`);
+    return distanceInMeters;
+  };
+  
+  const startTrip = () => {
+    setIsRunning(true);
+    setTime(0);
+    setDistance(0);
+    setAmount(0);
+    setLastPosition(null);
+    let isFirstUpdate = true; // Ignore the first GPS update
+  
+    const options = {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 20000,
+      distanceFilter: 2, // Reduce for more frequent updates
     };
   
-    const startTrip = () => {
-      setIsRunning(true);
-      setTime(0);
-      setDistance(0);
-      setAmount(0);
-      let isFirstUpdate = true; // Ignore the first GPS update
-    
-      const options = {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 20000,
-        distanceFilter: 2, // Reduce for more frequent updates
-      };
-    
-      const id = navigator.geolocation.watchPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          console.log("New Position:", latitude, longitude);
-    
-          // Handle position update
+    const id = navigator.geolocation.watchPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log("New Position:", latitude, longitude);
+  
+        setLastPosition((prevPosition) => {
           if (isFirstUpdate) {
             console.log("Ignoring first GPS update...");
             isFirstUpdate = false;
-          } else {
-            const dist = calculateDistance(latitude, longitude, latitude, longitude);
-            if (dist > 0.5) { // Even small movements should count
-              setDistance((prev) => prev + dist / 1000); // Update distance
-              setAmount((prevAmount) => prevAmount + (dist / 1000) * 50); // Update fare
-            }
+            return { lat: latitude, lon: longitude };
           }
-        },
-        (error) => console.error("Geolocation error:", error),
-        options
-      );
-    
-      setWatchId(id);
-    
-      // Start time counter
-      const interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
-      }, 1000);
-      setTimerId(interval);
-    };
+  
+          if (!prevPosition) return { lat: latitude, lon: longitude };
+  
+          const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
+  
+          if (dist > 0.5) { // Even small movements should count
+            console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
+  
+            // Updating distance correctly
+            setDistance((prev) => {
+              const newDistance = prev + dist / 1000; // Convert meters to km
+              console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+              return newDistance;
+            });
+  
+            // Updating amount correctly
+            setAmount((prevAmount) => {
+              const newAmount = prevAmount + (dist / 1000) * 50; // ₹50 per km
+              console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
+              return newAmount;
+            });
+          }
+  
+          return { lat: latitude, lon: longitude };
+        });
+      },
+      (error) => console.error("Geolocation error:", error),
+      options
+    );
+  
+    setWatchId(id);
+  
+    // Start time counter
+    const interval = setInterval(() => {
+      setTime((prevTime) => prevTime + 1);
+    }, 1000);
+    setTimerId(interval);
+  };
   
     // Start waiting time tracking
     const startWaiting = () => {
