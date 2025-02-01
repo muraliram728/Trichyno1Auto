@@ -5,6 +5,8 @@
   "dependencies": {
     "cra-template": "1.2.0",
     "firebase": "^11.2.0",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-icon": "^1.0.0",

@@ -76,3 +76,84 @@
     text-align: right;
   }
   
+  /* Invoice Container */
+.invoice-container {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  max-width: 400px;
+  margin: 20px auto;
+  background-color: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+/* Invoice Title */
+.invoice-title {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Invoice Details */
+.invoice-details {
+  margin-bottom: 20px;
+}
+
+/* Invoice Row */
+.invoice-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+/* Invoice Label */
+.invoice-label {
+  font-weight: bold;
+  color: #555;
+}
+
+/* Invoice Value */
+.invoice-value {
+  color: #333;
+}
+
+/* Invoice Total */
+.invoice-total {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+  padding-top: 10px;
+  border-top: 2px solid #333;
+}
+
+/* Total Label */
+.total-label {
+  color: #555;
+}
+
+/* Total Value */
+.total-value {
+  color: #333;
+}
+
+.download-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-top: 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.download-button:hover {
+  background-color: #0056b3;
+}
