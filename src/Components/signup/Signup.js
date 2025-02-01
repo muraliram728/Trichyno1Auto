@@ -17,8 +17,14 @@ const Signup = () => {
     setLoading(true);
 
     try {
-      await signup({ fname, lname, email, password, isAdmin: true }); // Pass isAdmin as true
-      navigate('/'); // Redirect after successful signup
+      // Combine fname and lname for displayName
+      const displayName = `${fname} ${lname}`;
+
+      // Pass the displayName and other details to signup
+      await signup({ fname, lname, email, password, displayName, isAdmin: true });
+
+      // Redirect after successful signup
+      navigate('/'); 
     } catch (err) {
       console.log("Signup failed:", err);
     } finally {

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../firebase/config"; // Import Firebase
+import { db, auth } from "../../firebase/config"; // Import Firebase
+import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import './tripTracker.css';
 import html2canvas from "html2canvas";
-import { jsPDF } from "jspdf"
+import { jsPDF } from "jspdf";
 
 const TripTracker = () => {
   const [distance, setDistance] = useState(0);
@@ -27,8 +28,27 @@ const TripTracker = () => {
     finalDistanceAmount: 0,
   });
   const [isDownloading, setIsDownloading] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserName, setCurrentUserName] = useState('');
 
   useEffect(() => {
+    const auth = getAuth();
+    const user = auth.currentUser; // Access the currently logged-in user
+
+    // Check if the user is logged in
+    if (user) {
+      console.log("Current User Details:");
+      console.log(`DisplayName: ${user.displayName}`);
+      console.log(`Email: ${user.email}`);
+      console.log(`UID: ${user.uid}`);
+      console.log(`Photo URL: ${user.photoURL}`);
+
+      setCurrentUser(user); // Set current user details
+      setCurrentUserName(user.displayName);
+    } else {
+      console.log("No user is logged in.");
+      setCurrentUser(null); // Clear user data if no one is logged in
+    }
     const fetchPrices = async () => {
       try {
         const priceDocRef = doc(db, "price", "currentPrice");
@@ -148,10 +168,17 @@ const TripTracker = () => {
             // Updating amount correctly
             setAmount((prevAmount) => {
               let newAmount;
+
               if (isFirstKilometer && (distance + dist / 1000) >= 1) {
                 // If the first kilometer is completed, switch to pricePer1Km
                 isFirstKilometer = false;
-                newAmount = currentPricePerKm + ((distance + dist / 1000 - 1) * currentPricePer1Km);
+
+                // Calculate the distance covered in the first kilometer
+                const distanceInFirstKm = 1 - distance;
+                const distanceAfterFirstKm = (distance + dist / 1000) - 1;
+
+                // Calculate the amount for the first kilometer and subsequent kilometers
+                newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
               } else if (isFirstKilometer) {
                 // If still within the first kilometer, use pricePerKm
                 newAmount = prevAmount + (dist / 1000) * currentPricePerKm;
@@ -159,6 +186,7 @@ const TripTracker = () => {
                 // For subsequent kilometers, use pricePer1Km
                 newAmount = prevAmount + (dist / 1000) * currentPricePer1Km;
               }
+
               console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
               return newAmount;
             });
@@ -331,6 +359,13 @@ const TripTracker = () => {
       {!isRunning && (
         <div className="invoice-container" id="invoice">
           <h3 className="invoice-title">Trip Invoice</h3>
+          <h3 className="invoice-title">Driver Name : {currentUserName}</h3>
+
+          {/* Display current user's name */}
+          <div className="invoice-row">
+            <span className="invoice-label">User Name:</span>
+            <span className="invoice-value">{currentUserName}</span> {/* Assuming currentUserName is the variable holding the user's name */}
+          </div>
           <div className="invoice-details">
             <div className="invoice-row">
               <span className="invoice-label">Final Distance:</span>
