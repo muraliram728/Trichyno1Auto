@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { db } from "../../firebase/config"; // Import Firebase
 import { doc, getDoc } from "firebase/firestore";
-import './tripTracker.css'
+import './tripTracker.css';
+import InvoicePage from "./InvoicePage";
 
 const TripTracker = () => {
   const [distance, setDistance] = useState(0);
@@ -16,6 +17,7 @@ const TripTracker = () => {
 
   const [waitingTimeInSeconds, setWaitingTimeInSeconds] = useState(0); // Track waiting time in seconds
   const [totalWaitingFee, setTotalWaitingFee] = useState(0); // Track total waiting fee
+  const [showInvoice, setShowInvoice] = useState(false);
 
   useEffect(() => {
     const fetchPrices = async () => {
@@ -115,7 +117,7 @@ const TripTracker = () => {
 
             // Updating amount correctly
             setAmount((prevAmount) => {
-              const newAmount = prevAmount + (dist / 1000) * 50; // ₹50 per km
+              const newAmount = prevAmount + (dist / 1000) * pricePerKm; // ₹50 per km
               console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
               return newAmount;
             });
@@ -137,36 +139,57 @@ const TripTracker = () => {
     setTimerId(interval);
   };
 
-  // Start waiting time tracking
+  // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
-    let secondsElapsed = 0; // Track the total time in seconds
+    const startTime = Date.now() - waitingTimeInSeconds * 1000; // Adjust start time based on previous waiting time
+
     const waitingInterval = setInterval(() => {
-      secondsElapsed += 1; // Increment by 1 second
+      const newElapsedSeconds = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time
 
-      setWaitingTimeInSeconds(secondsElapsed); // Update waiting time in seconds
-      setTotalWaitingFee(Math.floor(secondsElapsed / 60) * waitingFee); // Calculate waiting fee (per minute)
+      setWaitingTimeInSeconds(newElapsedSeconds); // Update UI
+      setTotalWaitingFee(Math.floor(newElapsedSeconds / 60) * waitingFee); // Calculate total waiting fee
 
-      console.log(`Waiting Time: ${Math.floor(secondsElapsed / 60)} minutes ${secondsElapsed % 60} seconds`);
+      console.log(`Waiting Time: ${Math.floor(newElapsedSeconds / 60)} minutes ${newElapsedSeconds % 60} seconds`);
     }, 1000); // Update every second
 
     setTimerId(waitingInterval);
   };
 
-  // Stop waiting and calculate total waiting fee
+  // Stop waiting and keep the elapsed time
   const stopWaiting = () => {
     if (timerId) clearInterval(timerId); // Stop the timer
-    setTotalWaitingFee(Math.floor(waitingTimeInSeconds / 60) * waitingFee); // Calculate total waiting fee
   };
+
 
   // Stop trip and calculate total fare
   const stopTrip = () => {
     if (watchId) navigator.geolocation.clearWatch(watchId); // Stop geolocation watch
     if (timerId) clearInterval(timerId); // Clear the time interval
 
+    // Preserve the last recorded waiting time and fee before resetting
+    const finalWaitingTime = waitingTimeInSeconds;
+    const finalWaitingFee = totalWaitingFee;
+    const FinalTripTime = time;
+    const FinalDistance = distance;
+    const FinalDistanceAmount = amount;
+
+
     // Just set the trip to stop without modifying amount again
-    setIsRunning(false);
-    setDistance(0);
-    setTime(0);
+    // setIsRunning(false);
+    // setDistance(0);
+    // setTime(0);
+    // setInterval(0);
+    // setWaitingTimeInSeconds(0); // Reset waiting time
+    // setTotalWaitingFee(0); // Reset waiting fee
+
+    // Log to ensure values are captured before reset
+    console.log(`Final Waiting Time: ${Math.floor(finalWaitingTime / 60)} minutes ${finalWaitingTime % 60} seconds`);
+    console.log(`Final Waiting Fee: ₹${finalWaitingFee.toFixed(2)}`);
+    console.log(`Final Trip Time : ₹${Math.floor(FinalTripTime / 60)} minutes ${FinalTripTime % 60} seconds`);
+    console.log(`Final Distance: ${FinalDistance}km`);
+    console.log(`Final Distance Amount: ₹${FinalDistanceAmount}`);
+
+    setShowInvoice(true);
   };
 
   return (
@@ -217,9 +240,19 @@ const TripTracker = () => {
       )}
 
       <h3 className="fare">Total Fare: ₹{(amount + totalWaitingFee).toFixed(2)}</h3>
+      
+      {showInvoice && (
+        <InvoicePage
+          distance={distance}
+          amount={amount}
+          totalWaitingFee={totalWaitingFee}
+          pricePerKm={pricePerKm}
+          tripTime={new Date(time * 1000).toISOString().substr(11, 8)}
+          waitingTime={`${Math.floor(waitingTimeInSeconds / 60)} min ${waitingTimeInSeconds % 60} sec`}
+        />
+      )}
+
     </div>
-
-
   );
 };
 
