@@ -6,6 +6,7 @@ import "./AdminStyle.css";
 
 const Admin = () => {
   const [pricePerKm, setPricePerKm] = useState("");
+  const [pricePer1Km, setPricePer1Km] = useState("");
   const [waitingFee, setWaitingFee] = useState(""); // ✅ Fixed state name
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -36,9 +37,11 @@ const Admin = () => {
               const data = priceDoc.data();
               setPricePerKm(data.pricePerKm.toString() || ""); // ✅ Ensure string format
               setWaitingFee(data.waitingFee?.toString() || ""); // ✅ Fetch waiting fee
+              setPricePer1Km(data.pricePer1Km?.toString() || ""); // ✅ Fetch price Per 1Km
             } else {
               setPricePerKm("");
               setWaitingFee(""); // ✅ Initialize waiting fee
+              setPricePer1Km("")
             }
           } else {
             alert("Unauthorized Access");
@@ -61,7 +64,7 @@ const Admin = () => {
 
   // ✅ Update Firestore with both price and waiting fee
   const handlePriceChange = async () => {
-    if (pricePerKm.trim() === "" || waitingFee.trim() === "") {
+    if (pricePerKm.trim() === "" || waitingFee.trim() === "" || pricePer1Km.trim() === "") {
       alert("Please enter valid values for both fields");
       return;
     }
@@ -71,6 +74,8 @@ const Admin = () => {
       await setDoc(priceDocRef, {
         pricePerKm: Number(pricePerKm),
         waitingFee: Number(waitingFee), // ✅ Store waiting fee in Firestore
+        pricePer1Km: Number(pricePer1Km), // ✅ Store waiting fee in Firestore
+
       });
 
       alert("Price and Waiting Fee updated successfully!");
@@ -86,12 +91,21 @@ const Admin = () => {
     <div className="admin-container">
       <h2>Admin Panel</h2>
       <label>
-        Price per km:
+        Price per km minimum price:
         <input
           type="number"
           value={pricePerKm}
           onChange={(e) => setPricePerKm(e.target.value)}
           placeholder="e.g., 10"
+        />
+      </label>
+      <label>
+        Price per 1 km:
+        <input
+          type="number"
+          value={pricePer1Km}
+          onChange={(e) => setPricePer1Km(e.target.value)}
+          placeholder="e.g., 18"
         />
       </label>
       <label>
@@ -104,7 +118,8 @@ const Admin = () => {
         />
       </label>
       <button onClick={handlePriceChange}>Set Price</button>
-      <p>Current Price: {pricePerKm ? `${pricePerKm} Rs/km` : "Not set"}</p>
+      <p>minimum price per km: {pricePerKm ? `${pricePerKm} Rs/km` : "Not set"}</p>
+      <p>Price per 1 km: {pricePer1Km ? `${pricePer1Km} Rs/km` : "Not set"}</p>
       <p>Current Waiting Fee: {waitingFee ? `${waitingFee} Rs/min` : "Not set"}</p>
     </div>
   );
