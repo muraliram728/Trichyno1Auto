@@ -30,6 +30,7 @@ const TripTracker = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserName, setCurrentUserName] = useState('');
+  const [isFirstKilometer, setIsFirstKilometer] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
@@ -169,13 +170,16 @@ const TripTracker = () => {
             setAmount((prevAmount) => {
               let newAmount;
 
-              if (isFirstKilometer && (distance + dist / 1000) >= 1) {
-                // If the first kilometer is completed, switch to pricePer1Km
-                isFirstKilometer = false;
+              // Convert dist from meters to kilometers
+              const newDistance = distance + dist / 1000;
 
-                // Calculate the distance covered in the first kilometer
+              if (isFirstKilometer && newDistance >= 1) {
+                // If the first kilometer is completed, switch to pricePer1Km
+                setIsFirstKilometer(false);
+
+                // Calculate the remaining distance in the first kilometer
                 const distanceInFirstKm = 1 - distance;
-                const distanceAfterFirstKm = (distance + dist / 1000) - 1;
+                const distanceAfterFirstKm = newDistance - 1;
 
                 // Calculate the amount for the first kilometer and subsequent kilometers
                 newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
@@ -188,6 +192,7 @@ const TripTracker = () => {
               }
 
               console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
+
               return newAmount;
             });
           }
@@ -302,6 +307,14 @@ const TripTracker = () => {
     <div>
       <div className="trip-tracker">
         <h2>Trip Tracker</h2>
+
+        <div>
+          <h2>Price Details</h2>
+          {currentUser && <p>Welcome, {currentUserName}!</p>}
+          <p><strong>Minimum Price:</strong> ₹{pricePerKm !== null ? pricePerKm : "Loading..."}</p>
+          <p><strong>Price per Km:</strong> ₹{pricePer1Km !== null ? pricePer1Km : "Loading..."}</p>
+          <p><strong>Waiting Fee per Minute:</strong> ₹{waitingFee !== null ? waitingFee : "Loading..."}</p>
+        </div>
 
         <div className="trip-detail">
           <span className="label">Price per km:</span>
