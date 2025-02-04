@@ -33,6 +33,8 @@ const TripTracker = () => {
   const [isFirstKilometer, setIsFirstKilometer] = useState(true);
 
   useEffect(() => {
+    if (pricePerKm !== undefined && pricePer1Km !== undefined) {
+      console.log("Prices fetched, ready to calculate amounts.");
     const auth = getAuth();
     const user = auth.currentUser; // Access the currently logged-in user
 
@@ -87,7 +89,8 @@ const TripTracker = () => {
     };
 
     fetchPrices();
-  }, []);
+  }
+}, [pricePerKm, pricePer1Km]);
 
   const isNightTime = () => {
     const now = new Date();
@@ -169,32 +172,41 @@ const TripTracker = () => {
             // Updating amount correctly
             setAmount((prevAmount) => {
               let newAmount;
-
+            
+              // Ensure we're using the latest price values
+              const pricePerKmValue = pricePerKm;
+              const pricePer1KmValue = pricePer1Km;
+            
               // Convert dist from meters to kilometers
               const newDistance = distance + dist / 1000;
-
+            
+              console.log(`New Distance: ${newDistance}`);
+              console.log(`Using pricePerKm: ₹${pricePerKmValue}`);
+              console.log(`Using pricePer1Km: ₹${pricePer1KmValue}`);
+            
               if (isFirstKilometer && newDistance >= 1) {
                 // If the first kilometer is completed, switch to pricePer1Km
                 setIsFirstKilometer(false);
-
+            
                 // Calculate the remaining distance in the first kilometer
                 const distanceInFirstKm = 1 - distance;
                 const distanceAfterFirstKm = newDistance - 1;
-
+            
                 // Calculate the amount for the first kilometer and subsequent kilometers
-                newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
+                newAmount = prevAmount + (distanceInFirstKm * pricePerKmValue) + (distanceAfterFirstKm * pricePer1KmValue);
               } else if (isFirstKilometer) {
                 // If still within the first kilometer, use pricePerKm
-                newAmount = prevAmount + (dist / 1000) * currentPricePerKm;
+                newAmount = prevAmount + (dist / 1000) * pricePerKmValue;
               } else {
                 // For subsequent kilometers, use pricePer1Km
-                newAmount = prevAmount + (dist / 1000) * currentPricePer1Km;
+                newAmount = prevAmount + (dist / 1000) * pricePer1KmValue;
               }
-
+            
               console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
-
+            
               return newAmount;
             });
+            
           }
 
           return { lat: latitude, lon: longitude };
