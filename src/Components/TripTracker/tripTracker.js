@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { db, auth } from "../../firebase/config"; // Import Firebase
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
@@ -31,6 +31,7 @@ const TripTracker = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserName, setCurrentUserName] = useState('');
   const [isFirstKilometer, setIsFirstKilometer] = useState(true);
+  const isFirstUpdateRef = useRef(true);
 
   useEffect(() => {
     if (pricePerKm !== undefined && pricePer1Km !== undefined) {
@@ -108,71 +109,69 @@ const TripTracker = () => {
   };
   
 
-  const startTrip = () => {
-    setIsRunning(true);
-    setTime(0);
-    setDistance(0);
-    setAmount(0);
-    setLastPosition(null);
-    let isFirstUpdate = true; // Ignore the first GPS update
-  
-    // Determine if it's night time
-    const isNight = isNightTime();
-  
-    // Use day or night rates based on the current time
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
-    const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
-  
-    const options = {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 20000,
-      distanceFilter: 2, // Reduce for more frequent updates
-    };
-  
-    const id = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log("New Position:", latitude, longitude);
-  
-        setLastPosition((prevPosition) => {
-          if (isFirstUpdate) {
-            console.log("Ignoring first GPS update...");
-            isFirstUpdate = false;
-            return { lat: latitude, lon: longitude };
-          }
-  
-          if (!prevPosition) return { lat: latitude, lon: longitude };
-  
-          const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
-  
-          if (dist > 0.5) { // Even small movements should count
-            console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
-  
-            setDistance((prevDistance) => {
-              const newDistance = prevDistance + dist / 1000; // Convert meters to km
-              console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
-              return newDistance;
-            });
-  
+
+const startTrip = () => {
+  setIsRunning(true);
+  setTime(0);
+  setDistance(0);
+  setAmount(0);
+  setLastPosition(null);
+
+  // Reset the ref when the trip starts
+  isFirstUpdateRef.current = true;
+
+  // Determine if it's night time
+  const isNight = isNightTime();
+
+  // Use day or night rates based on the current time
+  const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
+  const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
+  const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
+
+  const options = {
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 20000,
+    distanceFilter: 2, // Reduce for more frequent updates
+  };
+
+  const id = navigator.geolocation.watchPosition(
+    (position) => {
+      const { latitude, longitude } = position.coords;
+      console.log("New Position:", latitude, longitude);
+
+      setLastPosition((prevPosition) => {
+        if (isFirstUpdateRef.current) {
+          console.log("Ignoring first GPS update...");
+          isFirstUpdateRef.current = false; // Now we start tracking movement
+          return { lat: latitude, lon: longitude };
+        }
+
+        if (!prevPosition) return { lat: latitude, lon: longitude };
+
+        const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
+
+        if (dist > 0.5) { // Even small movements should count
+          console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
+
+          setDistance((prevDistance) => {
+            const newDistance = prevDistance + dist / 1000; // Convert meters to km
+            console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+
             setAmount((prevAmount) => {
               let newAmount;
-              
-              // Convert dist from meters to kilometers
-              const newDistance = distance + dist / 1000;
-              
+
               console.log(`New Distance: ${newDistance}`);
               console.log(`Using currentPricePerKm: ₹${currentPricePerKm}`);
               console.log(`Using currentPricePer1Km: ₹${currentPricePer1Km}`);
-              
+
               if (isFirstKilometer && newDistance >= 1) {
                 setIsFirstKilometer(false);
-                
+
                 // Calculate the remaining distance in the first kilometer
-                const distanceInFirstKm = 1 - distance;
+                const distanceInFirstKm = 1 - prevDistance;
                 const distanceAfterFirstKm = newDistance - 1;
-                
+
                 // Calculate the amount for the first kilometer and subsequent kilometers
                 newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
               } else if (isFirstKilometer) {
@@ -180,27 +179,32 @@ const TripTracker = () => {
               } else {
                 newAmount = prevAmount + (dist / 1000) * currentPricePer1Km;
               }
-              
+
               console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
               return newAmount;
             });
-          }
+
+            return newDistance;
+          });
+        }
+
+        return { lat: latitude, lon: longitude };
+      });
+    },
+    (error) => console.error("Geolocation error:", error),
+    options
+  );
+
+  setWatchId(id);
+
+  // Start time counter
+  const interval = setInterval(() => {
+    setTime((prevTime) => prevTime + 1);
+  }, 1000);
+  setTimerId(interval);
+};
+
   
-          return { lat: latitude, lon: longitude };
-        });
-      },
-      (error) => console.error("Geolocation error:", error),
-      options
-    );
-  
-    setWatchId(id);
-  
-    // Start time counter
-    const interval = setInterval(() => {
-      setTime((prevTime) => prevTime + 1);
-    }, 1000);
-    setTimerId(interval);
-  };
   
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
