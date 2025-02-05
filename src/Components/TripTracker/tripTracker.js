@@ -169,30 +169,34 @@ const TripTracker = () => {
             // Updating amount correctly
             setAmount((prevAmount) => {
               let newAmount;
-
+            
               // Convert dist from meters to kilometers
-              const newDistance = distance + dist / 1000;
-
+              const distInKm = dist / 1000;
+              const newDistance = distance + distInKm;
+            
               if (isFirstKilometer && newDistance >= 1) {
                 // If the first kilometer is completed, switch to pricePer1Km
                 setIsFirstKilometer(false);
-
+            
                 // Calculate the remaining distance in the first kilometer
                 const distanceInFirstKm = 1 - distance;
                 const distanceAfterFirstKm = newDistance - 1;
-
+            
                 // Calculate the amount for the first kilometer and subsequent kilometers
                 newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
               } else if (isFirstKilometer) {
                 // If still within the first kilometer, use pricePerKm
-                newAmount = prevAmount + (dist / 1000) * currentPricePerKm;
+                newAmount = prevAmount + distInKm * currentPricePerKm;
               } else {
                 // For subsequent kilometers, use pricePer1Km
-                newAmount = prevAmount + (dist / 1000) * currentPricePer1Km;
+                newAmount = prevAmount + distInKm * currentPricePer1Km;
               }
-
-              console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
-
+            
+              // Ensure the amount is precise to 2 decimal places
+              newAmount = parseFloat(newAmount.toFixed(2));
+            
+              console.log(`Updated Amount: ₹${newAmount}`);
+            
               return newAmount;
             });
           }
