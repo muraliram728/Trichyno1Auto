@@ -127,12 +127,23 @@ const startTrip = () => {
     let isFirstUpdate = true; // Ignore first GPS update
 
     // Determine if it's night time
+    const [isFirstKilometer, setIsFirstKilometer] = useState(true); // Moved to state
+
+const startTrip = () => {
+    setIsRunning(true);
+    setTime(0);
+    setDistance(0);
+    setAmount(0);
+    setLastPosition(null);
+    
+    let isFirstUpdate = true; // Ignore first GPS update
+
+    // Determine if it's night time
     const isNight = isNightTime();
 
     // Use day or night rates
     const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
     const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
-    // const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
 
     const options = {
         enableHighAccuracy: true,
@@ -168,22 +179,23 @@ const startTrip = () => {
                             let newAmount = prevAmount;
                             const distInKm = dist / 1000;
 
-                            if (isFirstKilometer && newDistance >= 1) {
-                                setIsFirstKilometer(false);
+                            if (isFirstKilometer) {
+                                if (newDistance >= 1) {
+                                    // If crossing 1 km, calculate properly
+                                    const remainingFirstKm = 1 - prevDistance; // Remaining part of first km
+                                    const afterFirstKm = newDistance - 1; // Extra distance beyond 1 km
 
-                                // Distance covered within the first km
-                                const remainingFirstKm = 1 - prevDistance;
-                                const afterFirstKm = newDistance - 1;
+                                    newAmount += remainingFirstKm * currentPricePerKm; // Charge remaining first km at pricePerKm
+                                    if (afterFirstKm > 0) {
+                                        newAmount += afterFirstKm * currentPricePer1Km; // Charge extra distance at pricePer1Km
+                                    }
 
-                                // First km fare + subsequent km fare
-                                newAmount += remainingFirstKm * currentPricePerKm;
-                                if (afterFirstKm > 0) {
-                                    newAmount += afterFirstKm * currentPricePer1Km;
+                                    setIsFirstKilometer(false); // Now charge next km at pricePer1Km
+                                } else {
+                                    newAmount += distInKm * currentPricePerKm; // Still within first km
                                 }
-                            } else if (isFirstKilometer) {
-                                newAmount += distInKm * currentPricePerKm;
                             } else {
-                                newAmount += distInKm * currentPricePer1Km;
+                                newAmount += distInKm * currentPricePer1Km; // After 1 km, normal price
                             }
 
                             console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
