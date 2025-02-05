@@ -179,12 +179,15 @@ const TripTracker = () => {
   
     // Timer for waiting fee
     const interval = setInterval(() => {
-      setTime((prevTime) => prevTime + 1);
-      setAmount((prevAmount) => prevAmount + waitingFee / 60);
+      if (!isMoving) {  // Check if the user is not moving
+        setTime((prevTime) => prevTime + 1);
+        setAmount((prevAmount) => prevAmount + waitingFee / 60);
+      }
     }, 1000);
   
     setTimerId(interval);
-  };
+};
+
   
   
 
