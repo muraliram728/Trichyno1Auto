@@ -109,61 +109,79 @@ const TripTracker = () => {
   
 
   const startTrip = () => {
-    if (!pricePerKm || !pricePer1Km || !waitingFee) {
-      console.error("Price values are not yet loaded.");
-      return;
-    }
-  
     setIsRunning(true);
     setTime(0);
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
-    setIsFirstKilometer(true);
+    let isFirstUpdate = true; // Ignore the first GPS update
   
+    // Determine if it's night time
     const isNight = isNightTime();
+  
+    // Use day or night rates based on the current time
     const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
     const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
+    const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
   
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
       timeout: 20000,
+      distanceFilter: 2, // Reduce for more frequent updates
     };
   
     const id = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
+        console.log("New Position:", latitude, longitude);
   
         setLastPosition((prevPosition) => {
+          if (isFirstUpdate) {
+            console.log("Ignoring first GPS update...");
+            isFirstUpdate = false;
+            return { lat: latitude, lon: longitude };
+          }
+  
           if (!prevPosition) return { lat: latitude, lon: longitude };
   
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
   
-          console.log(`Distance calculated: ${dist} meters`); // Debugging log
+          if (dist > 0.5) { // Even small movements should count
+            console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
   
-          if (dist > 0.5) { // Update only if user moves at least 0.5 meters
             setDistance((prevDistance) => {
-              const newDistance = prevDistance + dist / 1000;
-              console.log(`Updated Distance: ${newDistance} km`);
+              const newDistance = prevDistance + dist / 1000; // Convert meters to km
+              console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
               return newDistance;
             });
   
             setAmount((prevAmount) => {
               let newAmount;
-  
-              if (isFirstKilometer && distance + dist / 1000 >= 1) {
+              
+              // Convert dist from meters to kilometers
+              const newDistance = distance + dist / 1000;
+              
+              console.log(`New Distance: ${newDistance}`);
+              console.log(`Using currentPricePerKm: ₹${currentPricePerKm}`);
+              console.log(`Using currentPricePer1Km: ₹${currentPricePer1Km}`);
+              
+              if (isFirstKilometer && newDistance >= 1) {
                 setIsFirstKilometer(false);
+                
+                // Calculate the remaining distance in the first kilometer
                 const distanceInFirstKm = 1 - distance;
-                const distanceAfterFirstKm = distance + dist / 1000 - 1;
-                newAmount = prevAmount + distanceInFirstKm * currentPricePerKm + distanceAfterFirstKm * currentPricePer1Km;
+                const distanceAfterFirstKm = newDistance - 1;
+                
+                // Calculate the amount for the first kilometer and subsequent kilometers
+                newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
               } else if (isFirstKilometer) {
                 newAmount = prevAmount + (dist / 1000) * currentPricePerKm;
               } else {
                 newAmount = prevAmount + (dist / 1000) * currentPricePer1Km;
               }
-  
-              console.log(`Updated Amount: ₹${newAmount}`);
+              
+              console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
               return newAmount;
             });
           }
@@ -177,20 +195,13 @@ const TripTracker = () => {
   
     setWatchId(id);
   
-    // Timer for waiting fee
+    // Start time counter
     const interval = setInterval(() => {
-      if (!isMoving) {  // Check if the user is not moving
-        setTime((prevTime) => prevTime + 1);
-        setAmount((prevAmount) => prevAmount + waitingFee / 60);
-      }
+      setTime((prevTime) => prevTime + 1);
     }, 1000);
-  
     setTimerId(interval);
-};
-
+  };
   
-  
-
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
     if (timerId) clearInterval(timerId); // Prevent multiple timers
