@@ -35,69 +35,63 @@ const TripTracker = () => {
   useEffect(() => {
     if (pricePerKm !== undefined && pricePer1Km !== undefined) {
       console.log("Prices fetched, ready to calculate amounts.");
-    const auth = getAuth();
-    const user = auth.currentUser; // Access the currently logged-in user
+      const auth = getAuth();
+      const user = auth.currentUser; // Access the currently logged-in user
 
-    // Check if the user is logged in
-    if (user) {
-      console.log("Current User Details:");
-      console.log(`DisplayName: ${user.displayName}`);
-      console.log(`Email: ${user.email}`);
-      console.log(`UID: ${user.uid}`);
-      console.log(`Photo URL: ${user.photoURL}`);
+      // Check if the user is logged in
+      if (user) {
+        console.log("Current User Details:");
+        console.log(`DisplayName: ${user.displayName}`);
+        console.log(`Email: ${user.email}`);
+        console.log(`UID: ${user.uid}`);
+        console.log(`Photo URL: ${user.photoURL}`);
 
-      setCurrentUser(user); // Set current user details
-      setCurrentUserName(user.displayName);
-    } else {
-      console.log("No user is logged in.");
-      setCurrentUser(null); // Clear user data if no one is logged in
-    }
-    const fetchPrices = async () => {
-      try {
-        const priceDocRef = doc(db, "price", "currentPrice");
-        const priceDoc = await getDoc(priceDocRef);
-
-        if (priceDoc.exists()) {
-          const priceData = priceDoc.data();
-
-          if (priceData.pricePerKm !== undefined) {
-            console.log(`Fetched Price per Km: ₹${priceData.pricePerKm}`);
-            setPricePerKm(priceData.pricePerKm);
-          } else {
-            console.warn("Price per km not found in Firestore.");
-          }
-
-          if (priceData.waitingFee !== undefined) {
-            console.log(`Fetched Waiting Fee per Minute: ₹${priceData.waitingFee}`);
-            setWaitingFee(priceData.waitingFee); // Set waitingFee correctly
-          } else {
-            console.warn("Waiting fee not found in Firestore.");
-          }
-
-          if (priceData.pricePer1Km !== undefined) {
-            console.log(`Fetched subsequent Fee per 1 km : ₹${priceData.pricePer1Km}`);
-            setPricePer1Km(priceData.pricePer1Km); // Set pricePer1Km correctly
-          } else {
-            console.warn("Subsequent fee per 1 km not found in Firestore.");
-          }
-        } else {
-          console.error("Document not found at path: price/currentPrice.");
-        }
-      } catch (error) {
-        console.error("Error fetching prices:", error);
+        setCurrentUser(user); // Set current user details
+        setCurrentUserName(user.displayName);
+      } else {
+        console.log("No user is logged in.");
+        setCurrentUser(null); // Clear user data if no one is logged in
       }
-    };
+      const fetchPrices = async () => {
+        try {
+          const priceDocRef = doc(db, "price", "currentPrice");
+          const priceDoc = await getDoc(priceDocRef);
 
-    fetchPrices();
-  }
-}, [pricePerKm, pricePer1Km]);
+          if (priceDoc.exists()) {
+            const priceData = priceDoc.data();
 
-  const isNightTime = () => {
-    const now = new Date();
-    const hours = now.getHours();
-    // Night time is between 10 PM (22) and 5 AM (5)
-    return hours >= 22 || hours < 5;
-  };
+            if (priceData.pricePerKm !== undefined) {
+              console.log(`Fetched Price per Km: ₹${priceData.pricePerKm}`);
+              setPricePerKm(priceData.pricePerKm);
+            } else {
+              console.warn("Price per km not found in Firestore.");
+            }
+
+            if (priceData.waitingFee !== undefined) {
+              console.log(`Fetched Waiting Fee per Minute: ₹${priceData.waitingFee}`);
+              setWaitingFee(priceData.waitingFee); // Set waitingFee correctly
+            } else {
+              console.warn("Waiting fee not found in Firestore.");
+            }
+
+            if (priceData.pricePer1Km !== undefined) {
+              console.log(`Fetched subsequent Fee per 1 km : ₹${priceData.pricePer1Km}`);
+              setPricePer1Km(priceData.pricePer1Km); // Set pricePer1Km correctly
+            } else {
+              console.warn("Subsequent fee per 1 km not found in Firestore.");
+            }
+          } else {
+            console.error("Document not found at path: price/currentPrice.");
+          }
+        } catch (error) {
+          console.error("Error fetching prices:", error);
+        }
+      };
+
+      fetchPrices();
+    }
+  }, [pricePerKm, pricePer1Km]);
+
 
   // Function to calculate distance between two coordinates (Haversine Formula)
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
@@ -119,28 +113,36 @@ const TripTracker = () => {
     return distanceInMeters;
   };
 
+  const isNightTime = () => {
+    const now = new Date();
+    const hours = now.getHours();
+    // Night time is between 10 PM (22) and 5 AM (5)
+    return hours >= 22 || hours < 5;
+  };
+
   const startTrip = () => {
     setIsRunning(true);
     setTime(0);
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
-    let isFirstUpdate = true; // Ignore the first GPS update
-    let isFirstKilometer = true; // Track if it's the first kilometer
+    setIsFirstKilometer(true); // Ensure state resets properly
+
+    let isFirstUpdate = true; // Ignore first GPS update
 
     // Determine if it's night time
     const isNight = isNightTime();
 
     // Use day or night rates based on the current time
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
-    const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
+    const pricePerKmValue = isNight ? pricePerKm * 1.5 : pricePerKm;
+    const pricePer1KmValue = isNight ? pricePer1Km * 1.5 : pricePer1Km;
+    const waitingFeeValue = isNight ? waitingFee * 1.5 : waitingFee;
 
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
       timeout: 20000,
-      distanceFilter: 2, // Reduce for more frequent updates
+      distanceFilter: 2, // Frequent updates
     };
 
     const id = navigator.geolocation.watchPosition(
@@ -159,54 +161,46 @@ const TripTracker = () => {
 
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
 
-          if (dist > 0.5) { // Even small movements should count
+          if (dist > 0.5) { // Ignore very small movements
             console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
 
-            // Updating distance correctly
+            // Update Distance
             setDistance((prevDistance) => {
               const newDistance = prevDistance + dist / 1000; // Convert meters to km
+
+              // Ensure `isFirstKilometer` updates properly
+              if (isFirstKilometer && newDistance >= 1) {
+                setIsFirstKilometer(false);
+              }
+
               console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
               return newDistance;
             });
 
-            // Updating amount correctly
+            // Update Amount
             setAmount((prevAmount) => {
               let newAmount;
-            
-              // Ensure we're using the latest price values
-              const pricePerKmValue = pricePerKm;
-              const pricePer1KmValue = pricePer1Km;
-            
-              // Convert dist from meters to kilometers
-              const newDistance = distance + dist / 1000;
-            
-              console.log(`New Distance: ${newDistance}`);
-              console.log(`Using pricePerKm: ₹${pricePerKmValue}`);
-              console.log(`Using pricePer1Km: ₹${pricePer1KmValue}`);
-            
-              if (isFirstKilometer && newDistance >= 1) {
-                // If the first kilometer is completed, switch to pricePer1Km
-                setIsFirstKilometer(false);
-            
-                // Calculate the remaining distance in the first kilometer
-                const distanceInFirstKm = 1 - distance;
-                const distanceAfterFirstKm = newDistance - 1;
-            
-                // Calculate the amount for the first kilometer and subsequent kilometers
-                newAmount = prevAmount + (distanceInFirstKm * pricePerKmValue) + (distanceAfterFirstKm * pricePer1KmValue);
-              } else if (isFirstKilometer) {
-                // If still within the first kilometer, use pricePerKm
-                newAmount = prevAmount + (dist / 1000) * pricePerKmValue;
-              } else {
-                // For subsequent kilometers, use pricePer1Km
-                newAmount = prevAmount + (dist / 1000) * pricePer1KmValue;
-              }
-            
-              console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
-            
-              return newAmount;
+
+              setDistance((prevDistance) => {
+                const newDistance = prevDistance + dist / 1000;
+
+                if (isFirstKilometer && newDistance >= 1) {
+                  // First km completed, switch pricing
+                  const distanceInFirstKm = 1 - prevDistance;
+                  const distanceAfterFirstKm = newDistance - 1;
+
+                  newAmount = prevAmount + (distanceInFirstKm * pricePerKmValue) + (distanceAfterFirstKm * pricePer1KmValue);
+                } else if (isFirstKilometer) {
+                  newAmount = prevAmount + (dist / 1000) * pricePerKmValue;
+                } else {
+                  newAmount = prevAmount + (dist / 1000) * pricePer1KmValue;
+                }
+
+                console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
+                return newAmount;
+              });
+
             });
-            
           }
 
           return { lat: latitude, lon: longitude };
