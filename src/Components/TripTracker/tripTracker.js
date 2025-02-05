@@ -116,93 +116,93 @@ const TripTracker = () => {
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
+    setIsFirstKilometer(true); // Ensure we reset this flag
 
-    // Reset the ref when the trip starts
     isFirstUpdateRef.current = true;
 
-    // Determine if it's night time
     const isNight = isNightTime();
 
-    // Use day or night rates based on the current time
     const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
     const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
-    const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
 
     const options = {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 20000,
-      distanceFilter: 2, // Reduce for more frequent updates
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 20000,
+        distanceFilter: 2,
     };
 
     const id = navigator.geolocation.watchPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        console.log("New Position:", latitude, longitude);
+        (position) => {
+            const { latitude, longitude } = position.coords;
+            console.log("New Position:", latitude, longitude);
 
-        setLastPosition((prevPosition) => {
-          if (isFirstUpdateRef.current) {
-            console.log("Ignoring first GPS update...");
-            isFirstUpdateRef.current = false; // Now we start tracking movement
-            return { lat: latitude, lon: longitude };
-          }
-
-          if (!prevPosition) return { lat: latitude, lon: longitude };
-
-          const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
-
-          if (dist > 0.5) { // Even small movements should count
-            console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
-
-            setDistance((prevDistance) => {
-              const newDistance = prevDistance + dist / 1000; // Convert meters to km
-              console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
-
-              setAmount((prevAmount) => {
-                let newAmount;
-
-                console.log(`New Distance: ${newDistance}`);
-                console.log(`Using currentPricePerKm: ₹${currentPricePerKm}`);
-                console.log(`Using currentPricePer1Km: ₹${currentPricePer1Km}`);
-
-                if (isFirstKilometer && newDistance >= 1) {
-                  setIsFirstKilometer(false);
-
-                  // Calculate the remaining distance in the first kilometer
-                  const distanceInFirstKm = Math.max(0, 1 - prevDistance);
-                  const distanceAfterFirstKm = newDistance - 1;
-
-                  // Calculate the amount for the first kilometer and subsequent kilometers
-                  newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
-                } else if (isFirstKilometer) {
-                  newAmount = prevAmount + (dist / 1000) * currentPricePerKm;
-                } else {
-                  newAmount = prevAmount + (dist / 1000) * currentPricePer1Km;
+            setLastPosition((prevPosition) => {
+                if (isFirstUpdateRef.current) {
+                    console.log("Ignoring first GPS update...");
+                    isFirstUpdateRef.current = false;
+                    return { lat: latitude, lon: longitude };
                 }
 
-                console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
-                return newAmount;
-              });
+                if (!prevPosition) return { lat: latitude, lon: longitude };
 
-              return newDistance;
+                const dist = parseFloat(calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude).toFixed(3));
+
+                if (dist > 0.5) {
+                    console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
+
+                    setDistance((prevDistance) => {
+                        const newDistance = prevDistance + dist / 1000;
+                        console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+
+                        setAmount((prevAmount) => {
+                            let newAmount = prevAmount;
+
+                            console.log(`New Distance: ${newDistance}`);
+                            console.log(`Using currentPricePerKm: ₹${currentPricePerKm}`);
+                            console.log(`Using currentPricePer1Km: ₹${currentPricePer1Km}`);
+
+                            if (isFirstKilometer && newDistance >= 1) {
+                                setIsFirstKilometer(false);
+
+                                const remainingFirstKm = Math.max(0, 1 - prevDistance);
+                                const afterFirstKm = Math.max(0, newDistance - 1);
+
+                                newAmount += (remainingFirstKm * currentPricePerKm);
+                                if (afterFirstKm > 0) {
+                                    newAmount += (afterFirstKm * currentPricePer1Km);
+                                }
+                                console.log(`Updated Amount (First km transition): ₹${newAmount.toFixed(2)}`);
+                                return newAmount;  // Ensure execution stops here!
+                            }
+
+                            if (!isFirstKilometer) {
+                                newAmount += (dist / 1000) * currentPricePer1Km;
+                            }
+
+                            console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
+                            return newAmount;
+                        });
+
+                        return newDistance;
+                    });
+                }
+
+                return { lat: latitude, lon: longitude };
             });
-          }
-
-          return { lat: latitude, lon: longitude };
-        });
-      },
-      (error) => console.error("Geolocation error:", error),
-      options
+        },
+        (error) => console.error("Geolocation error:", error),
+        options
     );
 
     setWatchId(id);
 
     // Start time counter
     const interval = setInterval(() => {
-      setTime((prevTime) => prevTime + 1);
+        setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
-  };
+};
 
 
 
