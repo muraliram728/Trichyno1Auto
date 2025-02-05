@@ -217,27 +217,30 @@ const TripTracker = () => {
 
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
+    if (timerId) clearInterval(timerId); // Prevent multiple timers
+  
     const isNight = isNightTime();
     const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
-
-    const startTime = Date.now() - waitingTimeInSeconds * 1000; // Adjust start time based on previous waiting time
-
+  
+    const startTime = Date.now() - waitingTimeInSeconds * 1000; // Adjust for previous waiting time
+  
     const waitingInterval = setInterval(() => {
-      const newElapsedSeconds = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
-
-      setWaitingTimeInSeconds(newElapsedSeconds); // Update waiting time in seconds
-
+      const newElapsedSeconds = Math.floor((Date.now() - startTime) / 1000); // Elapsed seconds
+  
+      setWaitingTimeInSeconds(newElapsedSeconds); // Update waiting time
+  
       // Calculate total waiting fee (only for completed minutes)
-      const completedMinutes = Math.floor(newElapsedSeconds / 60); // Number of completed minutes
-      const totalFee = completedMinutes * currentWaitingFee; // Multiply by currentWaitingFee per minute
-      setTotalWaitingFee(totalFee); // Update total waiting fee
-
+      const completedMinutes = Math.floor(newElapsedSeconds / 60); 
+      const totalFee = completedMinutes * currentWaitingFee;
+      setTotalWaitingFee(totalFee); // Update fee
+  
       console.log(`Waiting Time: ${completedMinutes} minutes ${newElapsedSeconds % 60} seconds`);
       console.log(`Total Waiting Fee: ₹${totalFee.toFixed(2)}`);
     }, 1000); // Update every second
-
+  
     setTimerId(waitingInterval);
   };
+  
 
   // Stop waiting and keep the elapsed time
   const stopWaiting = () => {
@@ -266,6 +269,8 @@ const TripTracker = () => {
       finalDistanceAmount,
     });
 
+    setFinalTripDetails(finalTripDetails); // Save details
+    
     // Stop the trip
     setIsRunning(false);
 

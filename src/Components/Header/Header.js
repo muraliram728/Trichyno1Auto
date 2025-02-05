@@ -75,7 +75,7 @@ const Header = () => {
       <div className="banner">
         <img src={bannerimage} alt="Banner" className="banner-image" />
         <div className="banner-text">
-          <h1><span className='highlight-word-color'>Trichy</span> No.1 Auto</h1>
+          <h1><span className='highlight-word-color'>Trichy</span> No..1 Auto</h1>
           <p>Drivers Welfare Association</p>
           <h2>திருச்சி No.1 ஆட்டோ ஓட்டுனர் நலச்சங்கம்</h2>
           <p>"விரைவான சேவை. பாதுகாப்பான பயணம்."</p>
