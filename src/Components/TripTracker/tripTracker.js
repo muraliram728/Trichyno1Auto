@@ -33,8 +33,6 @@ const TripTracker = () => {
   const [isFirstKilometer, setIsFirstKilometer] = useState(true);
 
   useEffect(() => {
-    if (pricePerKm !== undefined && pricePer1Km !== undefined) {
-      console.log("Prices fetched, ready to calculate amounts.");
     const auth = getAuth();
     const user = auth.currentUser; // Access the currently logged-in user
 
@@ -59,13 +57,29 @@ const TripTracker = () => {
 
         if (priceDoc.exists()) {
           const priceData = priceDoc.data();
-          setPricePerKm(priceData.pricePerKm || 50); // Default fallback
-          setPricePer1Km(priceData.pricePer1Km || 18);
-          setWaitingFee(priceData.waitingFee || 2);
 
-          console.log("Fetched Prices:", priceData);
+          if (priceData.pricePerKm !== undefined) {
+            console.log(`Fetched Price per Km: ₹${priceData.pricePerKm}`);
+            setPricePerKm(priceData.pricePerKm);
+          } else {
+            console.warn("Price per km not found in Firestore.");
+          }
+
+          if (priceData.waitingFee !== undefined) {
+            console.log(`Fetched Waiting Fee per Minute: ₹${priceData.waitingFee}`);
+            setWaitingFee(priceData.waitingFee); // Set waitingFee correctly
+          } else {
+            console.warn("Waiting fee not found in Firestore.");
+          }
+
+          if (priceData.pricePer1Km !== undefined) {
+            console.log(`Fetched subsequent Fee per 1 km : ₹${priceData.pricePer1Km}`);
+            setPricePer1Km(priceData.pricePer1Km); // Set pricePer1Km correctly
+          } else {
+            console.warn("Subsequent fee per 1 km not found in Firestore.");
+          }
         } else {
-          console.error("Price document not found in Firestore.");
+          console.error("Document not found at path: price/currentPrice.");
         }
       } catch (error) {
         console.error("Error fetching prices:", error);
@@ -73,8 +87,7 @@ const TripTracker = () => {
     };
 
     fetchPrices();
-  }
-}, [pricePerKm, pricePer1Km]);
+  }, []);
 
   const isNightTime = () => {
     const now = new Date();
@@ -85,28 +98,23 @@ const TripTracker = () => {
 
   // Function to calculate distance between two coordinates (Haversine Formula)
   const calculateDistance = (lat1, lon1, lat2, lon2) => {
-    if (lat1 === lat2 && lon1 === lon2) {
-      console.warn("Same coordinates, distance is 0 meters.");
-      return 0;
-    }
-  
-    const R = 6371e3; // Earth's radius in meters
-    const φ1 = (lat1 * Math.PI) / 180;
-    const φ2 = (lat2 * Math.PI) / 180;
-    const Δφ = ((lat2 - lat1) * Math.PI) / 180;
-    const Δλ = ((lon2 - lon1) * Math.PI) / 180;
-  
+    const R = 6371; // Radius of Earth in km
+    const dLat = (lat2 - lat1) * (Math.PI / 180);
+    const dLon = (lon2 - lon1) * (Math.PI / 180);
+
     const a =
-      Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-      Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-  
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1 * (Math.PI / 180)) *
+      Math.cos(lat2 * (Math.PI / 180)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    const distance = R * c; // Distance in meters
-  
-    console.log(`Distance between points: ${distance.toFixed(2)} meters`);
-    return distance;
+    const distanceInMeters = R * c * 1000; // Convert to meters
+
+    console.log(`Calculated Distance: ${distanceInMeters.toFixed(2)} meters`);
+    return distanceInMeters;
   };
-  
 
   const startTrip = () => {
     setIsRunning(true);
@@ -114,120 +122,115 @@ const TripTracker = () => {
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
-    let isFirstUpdate = true; // Ignore the first GPS update
-  
+    let isFirstUpdate = true; // Ignore first GPS update
+
     // Determine if it's night time
     const isNight = isNightTime();
-  
-    // Use day or night rates based on the current time
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
-    const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
-  
+
+    // Use day or night rates
+    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // First km price
+    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Subsequent km price
+
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
       timeout: 20000,
       distanceFilter: 2, // Reduce for more frequent updates
     };
-  
+
     const id = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         console.log("New Position:", latitude, longitude);
-  
+
         setLastPosition((prevPosition) => {
           if (isFirstUpdate) {
             console.log("Ignoring first GPS update...");
             isFirstUpdate = false;
             return { lat: latitude, lon: longitude };
           }
-  
+
           if (!prevPosition) return { lat: latitude, lon: longitude };
-  
+
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
-  
-          if (dist > 0.5) { // Even small movements should count
+
+          if (dist > 0.5) { // Consider movement only if > 0.5 meters
             console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
-  
+
             setDistance((prevDistance) => {
               const newDistance = prevDistance + dist / 1000; // Convert meters to km
               console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
               return newDistance;
             });
-  
+
             setAmount((prevAmount) => {
               let newAmount;
-              
-              // Convert dist from meters to kilometers
-              const newDistance = distance + dist / 1000;
-              
-              console.log(`New Distance: ${newDistance}`);
-              console.log(`Using currentPricePerKm: ₹${currentPricePerKm}`);
-              console.log(`Using currentPricePer1Km: ₹${currentPricePer1Km}`);
-              
-              if (isFirstKilometer && newDistance >= 1) {
-                setIsFirstKilometer(false);
-                
-                // Calculate the remaining distance in the first kilometer
-                const distanceInFirstKm = 1 - distance;
-                const distanceAfterFirstKm = newDistance - 1;
-                
-                // Calculate the amount for the first kilometer and subsequent kilometers
-                newAmount = prevAmount + (distanceInFirstKm * currentPricePerKm) + (distanceAfterFirstKm * currentPricePer1Km);
-              } else if (isFirstKilometer) {
-                newAmount = prevAmount + (dist / 1000) * currentPricePerKm;
+              const newDistance = distance + dist / 1000; // Convert meters to km
+
+              if (newDistance <= 1) {
+                // Still within the first kilometer
+                newAmount = prevAmount + dist / 1000 * currentPricePerKm;
               } else {
-                newAmount = prevAmount + (dist / 1000) * currentPricePer1Km;
+                // Distance beyond 1 km
+                const remainingFirstKm = Math.max(0, 1 - distance); // Remaining distance in 1st km
+                const afterFirstKm = newDistance - 1; // Distance beyond 1 km
+
+                if (distance < 1) {
+                  // If still in first km, complete it at `pricePerKm`
+                  newAmount = prevAmount + (remainingFirstKm * currentPricePerKm) + (afterFirstKm * currentPricePer1Km);
+                } else {
+                  // All extra distance beyond 1km at `pricePer1Km`
+                  newAmount = prevAmount + (dist / 1000 * currentPricePer1Km);
+                }
               }
-              
-              console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
+
+              // Ensure amount is rounded correctly
+              newAmount = parseFloat(newAmount.toFixed(2));
+              console.log(`Updated Amount: ₹${newAmount}`);
+
               return newAmount;
             });
           }
-  
+
           return { lat: latitude, lon: longitude };
         });
       },
       (error) => console.error("Geolocation error:", error),
       options
     );
-  
+
     setWatchId(id);
-  
+
     // Start time counter
     const interval = setInterval(() => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
   };
-  
+
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
-    if (timerId) clearInterval(timerId); // Prevent multiple timers
-  
     const isNight = isNightTime();
     const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
-  
-    const startTime = Date.now() - waitingTimeInSeconds * 1000; // Adjust for previous waiting time
-  
+
+    const startTime = Date.now() - waitingTimeInSeconds * 1000; // Adjust start time based on previous waiting time
+
     const waitingInterval = setInterval(() => {
-      const newElapsedSeconds = Math.floor((Date.now() - startTime) / 1000); // Elapsed seconds
-  
-      setWaitingTimeInSeconds(newElapsedSeconds); // Update waiting time
-  
+      const newElapsedSeconds = Math.floor((Date.now() - startTime) / 1000); // Calculate elapsed time in seconds
+
+      setWaitingTimeInSeconds(newElapsedSeconds); // Update waiting time in seconds
+
       // Calculate total waiting fee (only for completed minutes)
-      const completedMinutes = Math.floor(newElapsedSeconds / 60); 
-      const totalFee = completedMinutes * currentWaitingFee;
-      setTotalWaitingFee(totalFee); // Update fee
-  
+      const completedMinutes = Math.floor(newElapsedSeconds / 60); // Number of completed minutes
+      const totalFee = completedMinutes * currentWaitingFee; // Multiply by currentWaitingFee per minute
+      setTotalWaitingFee(totalFee); // Update total waiting fee
+
       console.log(`Waiting Time: ${completedMinutes} minutes ${newElapsedSeconds % 60} seconds`);
       console.log(`Total Waiting Fee: ₹${totalFee.toFixed(2)}`);
     }, 1000); // Update every second
-  
+
     setTimerId(waitingInterval);
   };
-  
 
   // Stop waiting and keep the elapsed time
   const stopWaiting = () => {
@@ -236,8 +239,7 @@ const TripTracker = () => {
 
 
   // Stop trip and calculate total fare
-   // Stop trip and calculate total fare
-   const stopTrip = () => {
+  const stopTrip = () => {
     if (watchId) navigator.geolocation.clearWatch(watchId); // Stop geolocation watch
     if (timerId) clearInterval(timerId); // Clear the time interval
 
