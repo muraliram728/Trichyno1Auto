@@ -116,112 +116,97 @@ const TripTracker = () => {
     return distanceInMeters;
   };
 
-
-const startTrip = () => {
+  const startTrip = () => {
     setIsRunning(true);
     setTime(0);
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
-    
-    let isFirstUpdate = true; // Ignore first GPS update
-
-    // Determine if it's night time
-    const [isFirstKilometer, setIsFirstKilometer] = useState(true); // Moved to state
-
-const startTrip = () => {
-    setIsRunning(true);
-    setTime(0);
-    setDistance(0);
-    setAmount(0);
-    setLastPosition(null);
-    
     let isFirstUpdate = true; // Ignore first GPS update
 
     // Determine if it's night time
     const isNight = isNightTime();
 
     // Use day or night rates
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
+    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // First km price
+    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Subsequent km price
 
     const options = {
-        enableHighAccuracy: true,
-        maximumAge: 0,
-        timeout: 20000,
-        distanceFilter: 2, // Reduce for more frequent updates
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 20000,
+      distanceFilter: 2, // Reduce for more frequent updates
     };
 
     const id = navigator.geolocation.watchPosition(
-        (position) => {
-            const { latitude, longitude } = position.coords;
-            console.log("New Position:", latitude, longitude);
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        console.log("New Position:", latitude, longitude);
 
-            setLastPosition((prevPosition) => {
-                if (isFirstUpdate) {
-                    console.log("Ignoring first GPS update...");
-                    isFirstUpdate = false;
-                    return { lat: latitude, lon: longitude };
-                }
+        setLastPosition((prevPosition) => {
+          if (isFirstUpdate) {
+            console.log("Ignoring first GPS update...");
+            isFirstUpdate = false;
+            return { lat: latitude, lon: longitude };
+          }
 
-                if (!prevPosition) return { lat: latitude, lon: longitude };
+          if (!prevPosition) return { lat: latitude, lon: longitude };
 
-                const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
+          const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
 
-                if (dist > 0.5) { // Even small movements should count
-                    console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
+          if (dist > 0.5) { // Consider movement only if > 0.5 meters
+            console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
 
-                    setDistance((prevDistance) => {
-                        const newDistance = prevDistance + dist / 1000; // Convert meters to km
-                        console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
-
-                        setAmount((prevAmount) => {
-                            let newAmount = prevAmount;
-                            const distInKm = dist / 1000;
-
-                            if (isFirstKilometer) {
-                                if (newDistance >= 1) {
-                                    // If crossing 1 km, calculate properly
-                                    const remainingFirstKm = 1 - prevDistance; // Remaining part of first km
-                                    const afterFirstKm = newDistance - 1; // Extra distance beyond 1 km
-
-                                    newAmount += remainingFirstKm * currentPricePerKm; // Charge remaining first km at pricePerKm
-                                    if (afterFirstKm > 0) {
-                                        newAmount += afterFirstKm * currentPricePer1Km; // Charge extra distance at pricePer1Km
-                                    }
-
-                                    setIsFirstKilometer(false); // Now charge next km at pricePer1Km
-                                } else {
-                                    newAmount += distInKm * currentPricePerKm; // Still within first km
-                                }
-                            } else {
-                                newAmount += distInKm * currentPricePer1Km; // After 1 km, normal price
-                            }
-
-                            console.log(`Updated Amount: ₹${newAmount.toFixed(2)}`);
-                            return Number(newAmount.toFixed(2));
-                        });
-
-                        return newDistance;
-                    });
-                }
-
-                return { lat: latitude, lon: longitude };
+            setDistance((prevDistance) => {
+              const newDistance = prevDistance + dist / 1000; // Convert meters to km
+              console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+              return newDistance;
             });
-        },
-        (error) => console.error("Geolocation error:", error),
-        options
+
+            setAmount((prevAmount) => {
+              let newAmount;
+              const newDistance = distance + dist / 1000; // Convert meters to km
+
+              if (newDistance <= 1) {
+                // Still within the first kilometer
+                newAmount = prevAmount + dist / 1000 * currentPricePerKm;
+              } else {
+                // Distance beyond 1 km
+                const remainingFirstKm = Math.max(0, 1 - distance); // Remaining distance in 1st km
+                const afterFirstKm = newDistance - 1; // Distance beyond 1 km
+
+                if (distance < 1) {
+                  // If still in first km, complete it at `pricePerKm`
+                  newAmount = prevAmount + (remainingFirstKm * currentPricePerKm) + (afterFirstKm * currentPricePer1Km);
+                } else {
+                  // All extra distance beyond 1km at `pricePer1Km`
+                  newAmount = prevAmount + (dist / 1000 * currentPricePer1Km);
+                }
+              }
+
+              // Ensure amount is rounded correctly
+              newAmount = parseFloat(newAmount.toFixed(2));
+              console.log(`Updated Amount: ₹${newAmount}`);
+
+              return newAmount;
+            });
+          }
+
+          return { lat: latitude, lon: longitude };
+        });
+      },
+      (error) => console.error("Geolocation error:", error),
+      options
     );
 
     setWatchId(id);
 
     // Start time counter
     const interval = setInterval(() => {
-        setTime((prevTime) => prevTime + 1);
+      setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
-};
-
+  };
 
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
@@ -433,5 +418,5 @@ const startTrip = () => {
     </div>
   );
 };
-}
+
 export default TripTracker;
