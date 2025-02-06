@@ -31,8 +31,6 @@ const TripTracker = () => {
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserName, setCurrentUserName] = useState('');
   const [isFirstKilometer, setIsFirstKilometer] = useState(true);
-  const [logs, setLogs] = useState([]);
-
 
   useEffect(() => {
     const auth = getAuth();
@@ -184,23 +182,11 @@ const TripTracker = () => {
                   // All extra distance beyond 1km at `pricePer1Km`
                   newAmount = prevAmount + (dist / 1000 * currentPricePer1Km);
                 }
-
-                console.log(`Remaining First Km Distance: ${remainingFirstKm}`);
-                console.log(`After First Km Distance: ${afterFirstKm}`);
-                console.log(`Calculated Amount: ₹${newAmount}`);
-
-                setLogs((prevLogs) => [
-                  ...prevLogs,
-                  `Remaining First Km Distance: ${remainingFirstKm}`,
-                  `After First Km Distance: ${afterFirstKm}`,
-                  `Calculated Amount: ₹${newAmount}`,
-                ]);
               }
 
               // Ensure amount is rounded correctly
               newAmount = parseFloat(newAmount.toFixed(2));
               console.log(`Updated Amount: ₹${newAmount}`);
-              setLogs((prevLogs) => [...prevLogs, `Updated Amount: ₹${newAmount}`]);
 
               return newAmount;
             });
@@ -283,7 +269,7 @@ const TripTracker = () => {
     console.log(`Final Distance: ${finalDistance} km`);
     console.log(`Final Distance Amount: ₹${finalDistanceAmount}`);
   };
-
+  
 
   const downloadInvoice = () => {
     const invoiceElement = document.getElementById("invoice");
@@ -317,20 +303,6 @@ const TripTracker = () => {
     <div>
       <div className="trip-tracker">
         <h2>Trip Tracker</h2>
-
-        <div style={{ padding: '10px' }}>
-          <p><strong>Logs:</strong></p>
-          {logs.length > 0 ? (
-            logs.map((log, index) => (
-              <p key={index} style={{ fontSize: '12px', color: 'blue', margin: '5px 0' }}>
-                {log}
-              </p>
-            ))
-          ) : (
-            <p style={{ fontSize: '12px', color: 'gray' }}>No logs yet</p>
-          )}
-        </div>
-
 
         <div>
           <h2>Price Details</h2>
