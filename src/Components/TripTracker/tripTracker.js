@@ -433,5 +433,5 @@ const startTrip = () => {
     </div>
   );
 };
-
+}
 export default TripTracker;
