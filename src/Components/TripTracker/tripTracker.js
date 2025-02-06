@@ -154,7 +154,7 @@ const TripTracker = () => {
 
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
 
-          if (dist > 0.5) { // Consider movement only if > 0.5 meters
+          if (dist > 10) { // Consider movement only if > 0.5 meters
             console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
 
             setDistance((prevDistance) => {
@@ -163,33 +163,31 @@ const TripTracker = () => {
               return newDistance;
             });
 
-            setAmount((prevAmount) => {
+            setAmount((prevAmount) => { 
               let newAmount;
               const newDistance = distance + dist / 1000; // Convert meters to km
-
-              if (newDistance <= 1) {
-                // Still within the first kilometer
-                newAmount = prevAmount + dist / 1000 * currentPricePerKm;
-              } else {
-                // Distance beyond 1 km
-                const remainingFirstKm = Math.max(0, 1 - distance); // Remaining distance in 1st km
-                const afterFirstKm = newDistance - 1; // Distance beyond 1 km
-
-                if (distance < 1) {
-                  // If still in first km, complete it at `pricePerKm`
+          
+              if (distance < 1 && newDistance >= 1) {
+                  // Transitioning from the first km to beyond
+                  const remainingFirstKm = 1 - distance; // Remaining part of the first km
+                  const afterFirstKm = newDistance - 1; // Distance beyond 1 km
+          
                   newAmount = prevAmount + (remainingFirstKm * currentPricePerKm) + (afterFirstKm * currentPricePer1Km);
-                } else {
-                  // All extra distance beyond 1km at `pricePer1Km`
+              } else if (newDistance <= 1) {
+                  // Still within the first kilometer
+                  newAmount = prevAmount + (dist / 1000 * currentPricePerKm);
+              } else {
+                  // Beyond the first kilometer
                   newAmount = prevAmount + (dist / 1000 * currentPricePer1Km);
-                }
               }
-
-              // Ensure amount is rounded correctly
-              newAmount = parseFloat(newAmount.toFixed(2));
+          
+              // Round once at the end
+              newAmount = Math.round(newAmount * 100) / 100;
+          
               console.log(`Updated Amount: ₹${newAmount}`);
-
               return newAmount;
-            });
+          });
+          
           }
 
           return { lat: latitude, lon: longitude };
