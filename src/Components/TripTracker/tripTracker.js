@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db } from "../../firebase/config"; // Import Firebase
+import { db, auth } from "../../firebase/config"; // Import Firebase
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import './tripTracker.css';
@@ -30,7 +30,7 @@ const TripTracker = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserName, setCurrentUserName] = useState('');
-  // const [isFirstKilometer, setIsFirstKilometer] = useState(true);
+  const [isFirstKilometer, setIsFirstKilometer] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
@@ -124,6 +124,13 @@ const TripTracker = () => {
     setLastPosition(null);
     let isFirstUpdate = true; // Ignore first GPS update
 
+    // Determine if it's night time
+    const isNight = isNightTime();
+
+    // Use day or night rates
+    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // First km price
+    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Subsequent km price
+
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
@@ -147,34 +154,44 @@ const TripTracker = () => {
 
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
 
-          if (dist > 10) { // Consider movement only if > 10 meters
+          if (dist > 10) { // Consider movement only if > 0.5 meters
             console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
 
             setDistance((prevDistance) => {
               const newDistance = prevDistance + dist / 1000; // Convert meters to km
               console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
-              
-              // Update fare calculation inside distance state update
-              setAmount(() => {
-                  const isNight = isNightTime();
-                  const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // First km price
-                  const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Subsequent km price
-
-                  let newAmount;
-                  if (newDistance <= 1) {
-                      newAmount = newDistance * currentPricePerKm;
-                  } else {
-                      newAmount = currentPricePerKm + ((newDistance - 1) * currentPricePer1Km);
-                  }
-
-                  newAmount = parseFloat(newAmount.toFixed(2));
-                  console.log(`Updated Amount: ₹${newAmount}`);
-
-                  return newAmount;
-              });
-
               return newDistance;
             });
+
+            setAmount((prevAmount) => {
+              let newAmount;
+            
+              // Convert distance from meters to kilometers
+              const distInKm = dist / 1000;
+              const newDistance = distance + distInKm;
+            
+              if (newDistance <= 1) {
+                // If the total distance is within the first kilometer, charge currentPricePerKm
+                newAmount = prevAmount + distInKm * currentPricePerKm;
+              } else if (distance < 1 && newDistance > 1) {
+                // If transitioning from the first kilometer to beyond
+                const remainingFirstKm = 1 - distance; // Remaining part of the first km
+                const afterFirstKm = newDistance - 1; // Distance beyond 1 km
+            
+                // Charge currentPricePerKm for the remaining first km and currentPricePer1Km for the rest
+                newAmount = prevAmount + (remainingFirstKm * currentPricePerKm) + (afterFirstKm * currentPricePer1Km);
+              } else {
+                // If already beyond the first kilometer, charge currentPricePer1Km for the entire distance
+                newAmount = prevAmount + distInKm * currentPricePer1Km;
+              }
+            
+              // Round to 2 decimal places for precision
+              newAmount = Math.round(newAmount * 100) / 100;
+            
+              console.log(`Updated Amount: ₹${newAmount}`);
+              return newAmount;
+            });
+          
           }
 
           return { lat: latitude, lon: longitude };
@@ -191,7 +208,7 @@ const TripTracker = () => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
-};
+  };
 
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
