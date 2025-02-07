@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../../firebase/config"; // Import Firebase
+import { db } from "../../firebase/config"; // Import Firebase
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import './tripTracker.css';
@@ -30,7 +30,7 @@ const TripTracker = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentUserName, setCurrentUserName] = useState('');
-  const [isFirstKilometer, setIsFirstKilometer] = useState(true);
+  // const [isFirstKilometer, setIsFirstKilometer] = useState(true);
 
   useEffect(() => {
     const auth = getAuth();
@@ -124,13 +124,6 @@ const TripTracker = () => {
     setLastPosition(null);
     let isFirstUpdate = true; // Ignore first GPS update
 
-    // Determine if it's night time
-    const isNight = isNightTime();
-
-    // Use day or night rates
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // First km price
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Subsequent km price
-
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
@@ -154,40 +147,34 @@ const TripTracker = () => {
 
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
 
-          if (dist > 10) { // Consider movement only if > 0.5 meters
+          if (dist > 10) { // Consider movement only if > 10 meters
             console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
 
             setDistance((prevDistance) => {
               const newDistance = prevDistance + dist / 1000; // Convert meters to km
               console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+              
+              // Update fare calculation inside distance state update
+              setAmount(() => {
+                  const isNight = isNightTime();
+                  const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // First km price
+                  const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Subsequent km price
+
+                  let newAmount;
+                  if (newDistance <= 1) {
+                      newAmount = newDistance * currentPricePerKm;
+                  } else {
+                      newAmount = currentPricePerKm + ((newDistance - 1) * currentPricePer1Km);
+                  }
+
+                  newAmount = parseFloat(newAmount.toFixed(2));
+                  console.log(`Updated Amount: ₹${newAmount}`);
+
+                  return newAmount;
+              });
+
               return newDistance;
             });
-
-            setAmount((prevAmount) => { 
-              let newAmount;
-              const newDistance = distance + dist / 1000; // Convert meters to km
-          
-              if (distance < 1 && newDistance >= 1) {
-                  // Transitioning from the first km to beyond
-                  const remainingFirstKm = 1 - distance; // Remaining part of the first km
-                  const afterFirstKm = newDistance - 1; // Distance beyond 1 km
-          
-                  newAmount = prevAmount + (remainingFirstKm * currentPricePerKm) + (afterFirstKm * currentPricePer1Km);
-              } else if (newDistance <= 1) {
-                  // Still within the first kilometer
-                  newAmount = prevAmount + (dist / 1000 * currentPricePerKm);
-              } else {
-                  // Beyond the first kilometer
-                  newAmount = prevAmount + (dist / 1000 * currentPricePer1Km);
-              }
-          
-              // Round once at the end
-              newAmount = Math.round(newAmount * 100) / 100;
-          
-              console.log(`Updated Amount: ₹${newAmount}`);
-              return newAmount;
-          });
-          
           }
 
           return { lat: latitude, lon: longitude };
@@ -204,7 +191,7 @@ const TripTracker = () => {
       setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
-  };
+};
 
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
