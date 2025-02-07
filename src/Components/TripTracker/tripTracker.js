@@ -122,41 +122,42 @@ const TripTracker = () => {
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
-    let isFirstUpdate = true; // Ignore first GPS update
-
+    let isFirstUpdate = true; // Ignore the first GPS update
+  
     // Determine if it's night time
     const isNight = isNightTime();
-
-    // Use day or night rates
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // First km price
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Subsequent km price
-
+  
+    // Use day or night rates based on the current time
+    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
+    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
+    // const currentWaitingFee = isNight ? waitingFee * 1.5 : waitingFee;
+  
     const options = {
       enableHighAccuracy: true,
       maximumAge: 0,
       timeout: 20000,
       distanceFilter: 2, // Reduce for more frequent updates
     };
-
+  
     const id = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
         console.log("New Position:", latitude, longitude);
-
+  
         setLastPosition((prevPosition) => {
           if (isFirstUpdate) {
             console.log("Ignoring first GPS update...");
             isFirstUpdate = false;
             return { lat: latitude, lon: longitude };
           }
-
+  
           if (!prevPosition) return { lat: latitude, lon: longitude };
-
+  
           const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
-
-          if (dist > 10) { // Consider movement only if > 0.5 meters
+  
+          if (dist > 0.5) { // Even small movements should count
             console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
-
+  
             setDistance((prevDistance) => {
               const newDistance = prevDistance + dist / 1000; // Convert meters to km
               console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
