@@ -141,30 +141,26 @@ const TripTracker = () => {
             console.log("New Position:", latitude, longitude, "Speed:", speed);
 
             setLastPosition((prevPosition) => {
-              if (isFirstUpdate) {
-                console.log("Ignoring first GPS update...");
-                isFirstUpdate = false;
-                return { lat: latitude, lon: longitude };
-              }
-      
-              if (!prevPosition) return { lat: latitude, lon: longitude };
-      
-              const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
-      
-              if (dist > 0.5) { // Even small movements should count
-                console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
-      
-                setDistance((prevDistance) => {
-                  const newDistance = prevDistance + dist / 1000; // Convert meters to km
-                  console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
-                  return newDistance;
-                });
-              }    
+                if (isFirstUpdate) {
+                    console.log("Ignoring first GPS update...");
+                    isFirstUpdate = false;
+                    return { lat: latitude, lon: longitude };
+                }
+
+                if (!prevPosition) return { lat: latitude, lon: longitude };
+
+                const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
+
+                // Ignore small GPS fluctuations (less than 5m) OR when speed is 0
+                if (dist < 0.005 || speed === 0) {
+                    console.log("Ignoring small movement or stationary position.");
+                    return prevPosition;
+                }
 
                 console.log(`Movement detected. Distance: ${dist.toFixed(3)} km`);
 
                 setDistance((prevDistance) => {
-                    const newDistance = prevDistance + dist;
+                    const newDistance = prevDistance + dist; // Already in km
                     console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
 
                     let newAmount;
@@ -201,6 +197,7 @@ const TripTracker = () => {
     }, 1000);
     setTimerId(interval);
 };
+
 
 
 
