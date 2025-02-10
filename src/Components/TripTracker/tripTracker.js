@@ -122,17 +122,17 @@ const TripTracker = () => {
     setDistance(0);
     setAmount(0);
     setLastPosition(null);
-    let isFirstUpdate = true; // Ignore the first GPS update
+    let isFirstUpdate = true;
 
     const isNight = isNightTime();
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // Base price
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Per km after 1km
+    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; 
+    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
 
     const options = {
         enableHighAccuracy: true,
         maximumAge: 0,
         timeout: 20000,
-        distanceFilter: 5, // Reduce GPS fluctuations
+        distanceFilter: 5, 
     };
 
     const id = navigator.geolocation.watchPosition(
@@ -151,8 +151,8 @@ const TripTracker = () => {
 
                 const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
 
-                // Ignore small GPS fluctuations (less than 5m) OR when speed is 0
-                if (dist < 0.005 || speed === 0) {
+                // 🚨 **Fix GPS Drift Issues**
+                if (dist < 0.005 || speed === 0) { 
                     console.log("Ignoring small movement or stationary position.");
                     return prevPosition;
                 }
@@ -160,19 +160,15 @@ const TripTracker = () => {
                 console.log(`Movement detected. Distance: ${dist.toFixed(3)} km`);
 
                 setDistance((prevDistance) => {
-                    const newDistance = prevDistance + dist; // Already in km
+                    const newDistance = prevDistance + dist;
                     console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
 
                     let newAmount;
                     if (newDistance <= 1) {
-                        // If distance is 1 km or less, charge currentPricePerKm
                         newAmount = currentPricePerKm * newDistance;
                     } else {
-                        // Charge base fare for the first km
                         newAmount = currentPricePerKm;
-
-                        // Calculate additional fare for distance beyond 1km
-                        let extraKm = newDistance - 1; // Extra distance after 1 km
+                        let extraKm = newDistance - 1;
                         newAmount += extraKm * currentPricePer1Km;
                     }
 
@@ -197,6 +193,7 @@ const TripTracker = () => {
     }, 1000);
     setTimerId(interval);
 };
+
 
 
 
