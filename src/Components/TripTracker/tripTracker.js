@@ -128,8 +128,8 @@ const TripTracker = () => {
     const isNight = isNightTime();
 
     // Use day or night rates based on the current time
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
+    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // Base fare for the first 1km
+    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Fare for each km after 1km
 
     const options = {
         enableHighAccuracy: true,
@@ -161,12 +161,18 @@ const TripTracker = () => {
                         const newDistance = prevDistance + dist; // Add distance in km
                         console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
 
-                        // Calculate the new amount based on the updated distance
-                        let newAmount;
+                        let newAmount = 0;
+
                         if (newDistance <= 1) {
-                            newAmount = currentPricePerKm;
+                            // Within first 1 km, charge proportionally
+                            newAmount = (newDistance / 1) * currentPricePerKm;
                         } else {
-                            newAmount = currentPricePerKm + ((newDistance - 1) * currentPricePer1Km);
+                            // Charge for the first 1 km
+                            newAmount = currentPricePerKm;
+
+                            // Charge for additional km beyond 1 km
+                            const extraDistance = newDistance - 1;
+                            newAmount += Math.floor(extraDistance) * currentPricePer1Km;
                         }
 
                         // Ensure rounding to two decimal places
@@ -194,6 +200,7 @@ const TripTracker = () => {
     }, 1000);
     setTimerId(interval);
 };
+
 
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
