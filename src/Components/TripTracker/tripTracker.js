@@ -141,21 +141,25 @@ const TripTracker = () => {
             console.log("New Position:", latitude, longitude, "Speed:", speed);
 
             setLastPosition((prevPosition) => {
-                if (isFirstUpdate) {
-                    console.log("Ignoring first GPS update...");
-                    isFirstUpdate = false;
-                    return { lat: latitude, lon: longitude };
-                }
-
-                if (!prevPosition) return { lat: latitude, lon: longitude };
-
-                const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
-
-                // Ignore small GPS drifts (less than 5 meters) OR when speed is 0
-                if (dist < 0.005 || speed === 0) {
-                    console.log("Ignoring small movement or stationary position.");
-                    return prevPosition;
-                }
+              if (isFirstUpdate) {
+                console.log("Ignoring first GPS update...");
+                isFirstUpdate = false;
+                return { lat: latitude, lon: longitude };
+              }
+      
+              if (!prevPosition) return { lat: latitude, lon: longitude };
+      
+              const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
+      
+              if (dist > 0.5) { // Even small movements should count
+                console.log(`Movement detected. Distance: ${dist.toFixed(2)} meters`);
+      
+                setDistance((prevDistance) => {
+                  const newDistance = prevDistance + dist / 1000; // Convert meters to km
+                  console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+                  return newDistance;
+                });
+              }    
 
                 console.log(`Movement detected. Distance: ${dist.toFixed(3)} km`);
 
