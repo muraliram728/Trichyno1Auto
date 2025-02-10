@@ -124,24 +124,21 @@ const TripTracker = () => {
     setLastPosition(null);
     let isFirstUpdate = true; // Ignore the first GPS update
 
-    // Determine if it's night time
     const isNight = isNightTime();
-
-    // Use day or night rates based on the current time
-    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm; // Base fare for the first 1km
-    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km; // Fare for each km after 1km
+    const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
+    const currentPricePer1Km = isNight ? pricePer1Km * 1.5 : pricePer1Km;
 
     const options = {
         enableHighAccuracy: true,
         maximumAge: 0,
         timeout: 20000,
-        distanceFilter: 2, // Reduce for more frequent updates
+        distanceFilter: 5, // Increase to ignore small movements
     };
 
     const id = navigator.geolocation.watchPosition(
         (position) => {
-            const { latitude, longitude } = position.coords;
-            console.log("New Position:", latitude, longitude);
+            const { latitude, longitude, speed } = position.coords;
+            console.log("New Position:", latitude, longitude, "Speed:", speed);
 
             setLastPosition((prevPosition) => {
                 if (isFirstUpdate) {
@@ -154,36 +151,31 @@ const TripTracker = () => {
 
                 const dist = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
 
-                if (dist > 0.001) { // Ignore very small movements (less than 1 meter)
-                    console.log(`Movement detected. Distance: ${dist.toFixed(3)} km`);
-
-                    setDistance((prevDistance) => {
-                        const newDistance = prevDistance + dist; // Add distance in km
-                        console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
-
-                        let newAmount = 0;
-
-                        if (newDistance <= 1) {
-                            // Within first 1 km, charge proportionally
-                            newAmount = (newDistance / 1) * currentPricePerKm;
-                        } else {
-                            // Charge for the first 1 km
-                            newAmount = currentPricePerKm;
-
-                            // Charge for additional km beyond 1 km
-                            const extraDistance = newDistance - 1;
-                            newAmount += Math.floor(extraDistance) * currentPricePer1Km;
-                        }
-
-                        // Ensure rounding to two decimal places
-                        newAmount = parseFloat(newAmount.toFixed(2));
-
-                        console.log(`Updated Amount: ₹${newAmount}`);
-                        setAmount(newAmount);
-
-                        return newDistance;
-                    });
+                // Ignore if movement is less than 5 meters OR speed is 0
+                if (dist < 0.005 || speed === 0) {
+                    console.log("Ignoring small movement or stationary position.");
+                    return prevPosition;
                 }
+
+                console.log(`Movement detected. Distance: ${dist.toFixed(3)} km`);
+
+                setDistance((prevDistance) => {
+                    const newDistance = prevDistance + dist;
+                    console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
+
+                    let newAmount;
+                    if (newDistance <= 1) {
+                        newAmount = currentPricePerKm;
+                    } else {
+                        newAmount = currentPricePerKm + ((newDistance - 1) * currentPricePer1Km);
+                    }
+
+                    newAmount = parseFloat(newAmount.toFixed(2));
+                    console.log(`Updated Amount: ₹${newAmount}`);
+                    setAmount(newAmount);
+
+                    return newDistance;
+                });
 
                 return { lat: latitude, lon: longitude };
             });
@@ -194,12 +186,12 @@ const TripTracker = () => {
 
     setWatchId(id);
 
-    // Start time counter
     const interval = setInterval(() => {
         setTime((prevTime) => prevTime + 1);
     }, 1000);
     setTimerId(interval);
 };
+
 
 
   // Start waiting time tracking (Continues from previous value)
