@@ -1,17 +1,16 @@
 import React from 'react';
+import './Services.css'; // Import the external CSS
 
 const Services = () => {
-  const phoneNumbers = ['+918056499365', '+918765432109', '+917654321098']; // Add your numbers
+  const phoneNumbers = ['+919080076738', '+917603994107', '+918903123944']; // Your numbers
 
   return (
-    <div>
-      <h2>Contact Our Services</h2>
-      <ul>
+    <div className="services-container">
+      <h2 className="services-title">Contact Our Services</h2>
+      <ul className="services-list">
         {phoneNumbers.map((number, index) => (
           <li key={index}>
-            <a href={`tel:${number}`} style={{ textDecoration: 'none', color: 'blue', fontSize: '18px' }}>
-              {number}
-            </a>
+            <a href={`tel:${number}`} className="phone-button">{number}</a>
           </li>
         ))}
       </ul>

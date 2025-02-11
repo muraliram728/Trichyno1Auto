@@ -46,15 +46,6 @@ const Header = () => {
               </li>
               <li>
                 <NavLink 
-                  to="/Login" 
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={closeMenu} // Close the menu when clicked
-                >
-                  Login
-                </NavLink>
-              </li>
-              <li>
-                <NavLink 
                   to="/Signup" 
                   className={({ isActive }) => (isActive ? 'active' : '')}
                   onClick={closeMenu} // Close the menu when clicked

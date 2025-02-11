@@ -19,21 +19,48 @@
     border-radius: 5px;
   }
   
-  button {
-    width: 100%;
-    padding: 10px;
-    background-color: var(--main-color) !important;
-    color: rgb(0, 0, 0);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  /* Common Button Style */
+  .button-container {
+    display: flex;          
+    justify-content: center;
+    align-items: center;     
+    gap: 10px;              
+    margin-top: 15px;
   }
   
-  button:hover {
-    background-color: #45a049;
-  }
-  
-  .error-message {
-    color: red;
-    font-size: 14px;
-  }
+button {
+  flex: 1;
+  padding: 10px;
+  background-color: var(--main-color, #ffcc00);
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+  margin-right: 10px;
+}
+
+.login-btn{
+  background-color: #ff9900;
+}
+
+.login-btn:hover{
+  background-color: var(--main-color, #ffcc00);
+}
+
+/* Remove margin from last button to avoid extra spacing */
+button:last-child {
+  margin-right: 0;
+}
+
+/* Hover Effect */
+button:hover {
+  background-color: #ff9900;
+}
+
+/* Error Message */
+.error-message {
+  color: red;
+  font-size: 14px;
+}

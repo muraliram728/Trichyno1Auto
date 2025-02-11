@@ -63,9 +63,14 @@ const Signup = () => {
           onChange={(e) => setpassword(e.target.value)}
           required
         />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Signing up...' : 'Signup'}
-        </button>
+        <div className="button-container">
+          <button type="submit" disabled={loading}>
+            {loading ? 'Signing up...' : 'Signup'}
+          </button>
+          <button type="button" className="login-btn" onClick={() => navigate('/login')}>
+            Login
+          </button>
+        </div>
       </form>
       {error && <p className="error">{error}</p>}
     </div>
