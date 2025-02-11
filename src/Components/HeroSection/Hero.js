@@ -9,20 +9,25 @@ import customer from '../../assets/images/customer.jpg'
 import admin from '../../assets/images/admin.jpg'
 
 
+
 const Hero = () => {
 
   const navigate = useNavigate();
 
   const handleAdminClick = () => {
-    navigate('/admin'); // Navigate to the admin page
+    navigate('/admin'); 
   };
 
   const handleCostClick = () => {
-    navigate('/cost'); // Navigate to the admin page
+    navigate('/cost');
   };
 
   const handleTripTrackerClick = () => {
-    navigate('/TripTracker'); // Navigate to the admin page
+    navigate('/TripTracker');
+  };
+
+  const handleserviceClick = () => {
+    navigate('/service'); 
   };
   
   return (
@@ -43,7 +48,7 @@ const Hero = () => {
           <p>TripTracker</p>
         </div>
         <div className="image-container">
-          <img src={service} alt="Service" />
+          <img src={service} alt="Service" onClick={handleserviceClick}/>
           <p>Service</p>
         </div>
         <div className="image-container">
