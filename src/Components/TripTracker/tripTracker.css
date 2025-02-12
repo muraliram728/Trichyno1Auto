@@ -44,8 +44,7 @@
     margin: 10px 0;
     font-size: 16px;
     font-weight: bold;
-    border: 2px solid yellow;
-    background: yellow;
+    background: var(--main-color, #ffcc00);;
     color: black;
     border-radius: 8px;
     cursor: pointer;
@@ -53,7 +52,7 @@
   }
   
   .trip-tracker button:hover {
-    background: white;
+    background: #ff9900;
     color: black;
   }
   
@@ -145,15 +144,11 @@
   width: 100%;
   padding: 10px;
   margin-top: 20px;
-  background-color: #007bff;
+  background-color: var(--main-color, #ffcc00);
   color: white;
   border: none;
   border-radius: 5px;
   font-size: 16px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-}
-
-.download-button:hover {
-  background-color: #0056b3;
 }
