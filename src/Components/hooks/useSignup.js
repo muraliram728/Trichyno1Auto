@@ -6,7 +6,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 export const useSignup = () => {
   const [error, setError] = useState(null);
 
-  const signup = async ({ fname, lname, email, password,displayName, isAdmin = false }) => {
+  const signup = async ({ fname, lname, email, password,displayName, isAdmin = false, members = "no" , code }) => {
     setError(null);
 
     try {
@@ -25,6 +25,8 @@ export const useSignup = () => {
         email,
         isAdmin : false, // Admin flag
         displayName: displayName,
+        members,
+        code,
         createdAt: serverTimestamp(), // Server-generated timestamp
       });
 

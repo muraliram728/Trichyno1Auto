@@ -10,6 +10,7 @@ import Signup from './Components/signup/Signup';
 import Cost from './Components/Cost/cost';
 import TripTracker from './Components/TripTracker/tripTracker';
 import Service from './Components/Services/services'
+import Member from './Components/Member/member'
 
 function App() {
   return (
@@ -22,9 +23,10 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/admin" element={<Admin />} /> {/* Admin Page */}
-            <Route path="/cost" element={<Cost />} /> {/* Admin Page */}
+            <Route path="/cost" element={<Cost />} /> 
             <Route path="/triptracker" element={<TripTracker />} />
-            <Route path="/service" element={<Service />} /> {/* Admin Page */}
+            <Route path="/service" element={<Service />} />
+            <Route path="/member" element={<Member />} /> 
           </Routes>
         </div>
         {/* <Footer /> */}

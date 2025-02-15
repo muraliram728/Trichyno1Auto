@@ -30,6 +30,10 @@ const Hero = () => {
     navigate('/service'); 
   };
   
+  const handlememberClick = () => {
+    navigate('/member'); 
+  };
+  
   return (
     <div className="hero">
       <h2>Welcome</h2>
@@ -52,8 +56,8 @@ const Hero = () => {
           <p>Service</p>
         </div>
         <div className="image-container">
-          <img src={customer} alt="Customer" />
-          <p>Customer</p>
+          <img src={customer} alt="Customer" onClick={handlememberClick}/>
+          <p>Members</p>
         </div>
         <div className="image-container" onClick={handleAdminClick}>
           <img src={admin} alt="Admin" />

@@ -1,0 +1,44 @@
+.member-container {
+    height: auto;
+    width: 100%;
+    padding: 20px;
+    overflow-x: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content */
+  }
+
+  .header-container {
+    background-color:rgb(45, 41, 41);
+    padding: inherit;
+    color: white; /* Ensures text is visible */
+    width: -webkit-fill-available;
+  }
+  
+  /* Styling for highlighted word */
+  .highlight-word-color {
+    color: yellow; /* Customize the color */
+    font-weight: bold;
+  }
+  .member-title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+  }
+  
+  .data-grid-container {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+  }
+  
+  @media (max-width: 768px) {
+    .member-title {
+      font-size: 1.5rem;
+    }
+  
+    .data-grid-container .MuiDataGrid-root {
+      font-size: 12px;
+    }
+  }
+  

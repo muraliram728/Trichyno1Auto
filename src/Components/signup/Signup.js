@@ -7,6 +7,7 @@ const Signup = () => {
   const [fname, setfname] = useState('');
   const [lname, setlname] = useState('');
   const [email, setemail] = useState('');
+  const [code, setCode] = useState('');
   const [password, setpassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { signup, error } = useSignup();
@@ -21,7 +22,7 @@ const Signup = () => {
       const displayName = `${fname} ${lname}`;
 
       // Pass the displayName and other details to signup
-      await signup({ fname, lname, email, password, displayName, isAdmin: true });
+      await signup({ fname, lname, email, password, displayName, isAdmin: true, code });
 
       // Redirect after successful signup
       navigate('/'); 
@@ -54,6 +55,13 @@ const Signup = () => {
           placeholder="Email"
           value={email}
           onChange={(e) => setemail(e.target.value)}
+          required
+        />
+        <input
+          type="code"
+          placeholder="enter your code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
           required
         />
         <input
