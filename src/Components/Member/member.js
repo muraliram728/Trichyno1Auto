@@ -69,6 +69,10 @@ const Member = () => {
         { field: "displayName", headerName: "Name", width: 200 },
         { field: "code", headerName: "Code", width: 100 },
         { field: "email", headerName: "Email", width: 250 },
+        { field: "aadhaarCardNo", headerName: "Aadhaar No", width: 180 },
+        { field: "address", headerName: "Address", width: 200 },
+        { field: "mobileNo", headerName: "Mobile No", width: 150 },
+        { field: "altMobileNo", headerName: "Alt Mobile No", width: 150 },
         {
             field: "isAdmin",
             headerName: "Role",

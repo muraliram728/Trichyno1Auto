@@ -4,9 +4,12 @@ import { FaBars } from "react-icons/fa";
 import bannerimage from "../../assets/images/bgauto.avif";
 import { NavLink } from 'react-router-dom';
 import Logout from './Logout';
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../../firebase/config"; // Firebase auth
 
 const Header = () => {
   const [isopen, setIsopen] = useState(false);
+  const [user] = useAuthState(auth); // Get logged-in user
 
   const toggleMenu = () => {
     setIsopen(!isopen);
@@ -30,7 +33,7 @@ const Header = () => {
                 <NavLink 
                   to="/" 
                   className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={closeMenu} // Close the menu when clicked
+                  onClick={closeMenu}
                 >
                   Home
                 </NavLink>
@@ -39,23 +42,31 @@ const Header = () => {
                 <NavLink 
                   to="/about" 
                   className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={closeMenu} // Close the menu when clicked
+                  onClick={closeMenu}
                 >
                   About
                 </NavLink>
               </li>
-              <li>
-                <NavLink 
-                  to="/Signup" 
-                  className={({ isActive }) => (isActive ? 'active' : '')}
-                  onClick={closeMenu} // Close the menu when clicked
-                >
-                  Signup
-                </NavLink>
-              </li>
-              <li className="logout-container">
-                <Logout />
-              </li>
+
+              {/* Show Register/Login only if user is NOT logged in */}
+              {!user && (
+                <li>
+                  <NavLink 
+                    to="/Signup" 
+                    className={({ isActive }) => (isActive ? 'active' : '')}
+                    onClick={closeMenu}
+                  >
+                    Register/Login
+                  </NavLink>
+                </li>
+              )}
+
+              {/* Show Logout only if user IS logged in */}
+              {user && (
+                <li className="logout-container">
+                  <Logout />
+                </li>
+              )}
             </ul>
             <div className='icon' onClick={toggleMenu}>
               <FaBars />
@@ -63,6 +74,7 @@ const Header = () => {
           </nav>
         </div>
       </header>
+      
       <div className="banner">
         <img src={bannerimage} alt="Banner" className="banner-image" />
         <div className="banner-text">
