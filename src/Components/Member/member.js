@@ -124,8 +124,8 @@ const Member = () => {
     return (
         <div className="member-container">
             <div className="header-container">
-                <h2><span className="highlight-word-color">Trichy</span> No1 Auto</h2>
-                <h2 >Members <span className="highlight-word-color">List</span></h2>
+                 <h1 className='footer-header'>Trichy <span className='footer-highlight-word'>No.1 Auto</span></h1>
+                <h2 className="member">Members List</h2>
             </div>
             <div className="data-grid-container">
                 <DataGrid

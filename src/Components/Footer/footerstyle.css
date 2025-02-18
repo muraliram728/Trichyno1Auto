@@ -1,40 +1,147 @@
 /* Global Footer Styles */
 .Footer {
-    background-color: #fae208; /* Light gray background color */
+    background-color: #ffcc00; /* Light yellow background color */
     padding: 20px; /* Add space inside the box */
-    height: 150px; /* Fixed height */
+    height: 310px; /* Fixed height */
     width: 100%; /* Ensure it takes full width */
     position: relative; /* Required for positioning within the page */
+    box-sizing: border-box; /* Include padding in the height and width calculation */
 }
 
-/* Large Screens (Laptop / PC) */
-@media screen and (min-width: 1024px) {
-    .Footer {
-        padding: 20px; /* Maintain larger padding for laptops and PCs */
-        height: 150px; /* Keep the height as it is */
-    }
+.footer-highlight-words {
+    color: white; /* Highlight the word in white */
 }
 
-/* Tablets and smaller laptops (between 768px and 1023px) */
-@media screen and (max-width: 1023px) and (min-width: 768px) {
-    .Footer {
-        padding: 18px; /* Slightly reduce padding */
-        height: 130px; /* Reduce height for tablets */
-    }
+.footer-header {
+    font-size: 19px;
+    margin-bottom: 20px;
+    margin-right: 20px;
+}
+
+/* Footer Columns Styling */
+.footer-content {
+    display: flex;
+    justify-content: space-between; /* Distribute the columns evenly */
+    gap: 20px; /* Add some space between columns */
+    padding: 0 20px; /* Add horizontal padding */
+}
+
+.footer-column {
+    flex: 1; /* Each column takes equal space */
+    padding: 10px; /* Add padding inside each column */
+}
+
+.footer-subheader {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.footer-column ul {
+    list-style-type: none; /* Remove default list styling */
+    padding: 0;
+}
+
+.footer-column ul li {
+    margin-bottom: 8px; /* Add space between list items */
+}
+
+.footer-column ul li a {
+    text-decoration: none;
+    color: #333; /* Default link color */
+    font-size: 14px;
+}
+
+.footer-column ul li a:hover {
+    color: #ff6600; /* Highlight links on hover */
 }
 
 /* Small Tablets and Portrait Tablets (less than 768px) */
 @media screen and (max-width: 768px) {
     .Footer {
         padding: 15px; /* Reduce padding */
-        height: 120px; /* Reduce height */
+        height: auto; /* Let height adjust to content */
+    }
+    
+    .footer-header {
+        font-size: 16px; /* Smaller header size for mobile */
+    }
+    
+    .footer-content {
+        flex-direction: row; /* Keep columns in a row */
+        gap: 15px; /* Adjust space between columns */
+    }
+
+    .footer-column {
+        flex: none; /* Let columns take natural width */
+        width: 30%; /* Make columns take up 30% of the width */
+    }
+
+    .footer-subheader {
+        font-size: 14px; /* Smaller font size for subheaders */
+    }
+
+    .footer-column ul li a {
+        font-size: 12px; /* Smaller font size for links */
     }
 }
 
-/* Mobile devices (Phones: Android / iPhone) */
-@media screen and (max-width: 320px) {
+/* Extra Small Devices (425px screen width) */
+@media screen and (max-width: 425px) {
     .Footer {
-        padding: 10px; /* Further reduce padding */
-        height: 100px; /* Further reduce height */
+        padding: 10px; /* Reduce padding */
+        height: auto; /* Let height adjust to content */
+    }
+
+    .footer-header {
+        font-size: 14px; /* Smaller header for smaller screens */
+    }
+
+    .footer-content {
+        flex-direction: row; /* Keep columns in a row */
+        gap: 10px; /* Reduce gap between columns */
+    }
+
+    .footer-column {
+        flex: none; /* Let columns take natural width */
+        width: 30%; /* Make columns take up 30% of the width */
+    }
+
+    .footer-subheader {
+        font-size: 12px; /* Even smaller font size for subheaders */
+    }
+
+    .footer-column ul li a {
+        font-size: 10px; /* Even smaller font size for links */
+    }
+}
+
+/* Ultra Small Devices (375px screen width) */
+@media screen and (max-width: 375px) {
+    .Footer {
+        padding: 8px; /* Further reduce padding */
+        height: auto; /* Let height adjust to content */
+    }
+
+    .footer-header {
+        font-size: 12px; /* Even smaller header for very small screens */
+    }
+
+    .footer-content {
+        flex-direction: row; /* Keep columns in a row */
+        gap: 8px; /* Reduce gap even further */
+    }
+
+    .footer-column {
+        flex: none; /* Let columns take natural width */
+        width: 30%; /* Keep columns 30% width */
+    }
+
+    .footer-subheader {
+        font-size: 10px; /* Smaller font size for subheaders */
+    }
+
+    .footer-column ul li a {
+        font-size: 8px; /* Smaller font size for links */
     }
 }

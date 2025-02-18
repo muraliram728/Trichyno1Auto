@@ -16,10 +16,12 @@
   }
   
   /* Styling for highlighted word */
-  .highlight-word-color {
-    color: yellow; /* Customize the color */
-    font-weight: bold;
-  }
+  .footer-highlight-word {
+    color: rgb(255, 230, 0); /* Highlight the word in white */
+}
+.member{
+  color: white;
+}
   .member-title {
     text-align: center;
     font-size: 1.8rem;

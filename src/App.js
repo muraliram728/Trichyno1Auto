@@ -29,7 +29,7 @@ function App() {
             <Route path="/member" element={<Member />} /> 
           </Routes>
         </div>
-        {/* <Footer /> */}
+        <Footer />
       </div>
     </Router>
   );

@@ -25,7 +25,7 @@ const Logout = () => {
   };
 
   return (
-    <button onClick={handleLogout} style={{ color: 'white',backgroundColor:"var(--main-color)",padding: "6px",marginTop:"6px" }}>
+    <button onClick={handleLogout} style={{ color: 'white',padding: "6px",marginTop:"10px" }}>
       Logout
     </button>
   );
