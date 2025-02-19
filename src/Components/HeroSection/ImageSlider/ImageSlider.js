@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './ImageSlider.css';
 
 const images = [
@@ -15,18 +15,31 @@ const images = [
 
 const ImageSlider = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const slideIntervalTime = 3000; // 3 seconds
 
+    // Function to go to the next slide
     const nextSlide = () => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % images.length);
     };
 
+    // Function to go to the previous slide
     const prevSlide = () => {
         setCurrentIndex((prevIndex) => (prevIndex - 1 + images.length) % images.length);
     };
 
+    // Function to go to a specific slide
     const goToSlide = (index) => {
         setCurrentIndex(index);
     };
+
+    // Auto-slide effect
+    useEffect(() => {
+        const slideInterval = setInterval(() => {
+            nextSlide();
+        }, slideIntervalTime);
+
+        return () => clearInterval(slideInterval); // Cleanup on unmount
+    }, [currentIndex]); // Restart interval on index change
 
     return (
         <div>
@@ -43,7 +56,7 @@ const ImageSlider = () => {
 
             <br />
 
-            <div  style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center' }}>
                 {images.map((_, index) => (
                     <span
                         key={index}
