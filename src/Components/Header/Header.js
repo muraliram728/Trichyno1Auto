@@ -116,7 +116,7 @@ const Header = () => {
           <h2>Welcome,{currentUserName}<span style={{color:'rgb(106, 94, 94)'}} > ({code})</span> </h2>
             <h1><span className='highlight-word'>Trichy</span> No.1 Auto</h1>
             <h5 className='para'>Drivers Welfare Association</h5>
-            <h2>திருச்சி No.1 ஆட்டோ ஓட்டுனர் நலச்சங்கம்</h2>
+            <p className='forum'>திருச்சி No.1 ஆட்டோ ஓட்டுனர் நலச்சங்கம்</p>
             <p>"விரைவான சேவை. பாதுகாப்பான பயணம்."</p>
           </div>
           <div className="banner-img">

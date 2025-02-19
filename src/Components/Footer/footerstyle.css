@@ -1,11 +1,20 @@
 /* Global Footer Styles */
 .Footer {
-    background-color: #ffcc00; /* Light yellow background color */
+    background-color: #ffcc00; 
+    margin-top: 169px;
     padding: 20px; /* Add space inside the box */
-    height: 310px; /* Fixed height */
+    height: 45vh; /* Fixed height */
     width: 100%; /* Ensure it takes full width */
     position: relative; /* Required for positioning within the page */
     box-sizing: border-box; /* Include padding in the height and width calculation */
+    clip-path: polygon(
+        0 0,    /* Start from top-left */
+        50% 0,  /* Straight till 50% width */
+        60% 50px, /* Taper starts from 50% width and moves down to 50px */
+        100% 50px, /* Taper ends, and straight line starts at 50px height */
+        100% 80px, /* Maintain straight line till 80px height */
+        0 199938%    /* Bottom part remains unchanged */
+    );
 }
 
 .footer-highlight-words {
@@ -59,6 +68,7 @@
 /* Small Tablets and Portrait Tablets (less than 768px) */
 @media screen and (max-width: 768px) {
     .Footer {
+        margin-top: 5px;
         padding: 15px; /* Reduce padding */
         height: auto; /* Let height adjust to content */
     }

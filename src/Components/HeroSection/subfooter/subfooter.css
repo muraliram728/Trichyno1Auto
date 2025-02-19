@@ -13,7 +13,7 @@
   /* Content wrapper to use flexbox */
   .content-wrapper {
     position: absolute;
-    top: 77px;
+    top: 120px;
     left: 0;
     right: 0;
     display: flex;
@@ -38,7 +38,7 @@
   
   .overlay-image img {
     width: 350px;
-    height: 356px;
+    height: 300px;
     transform: scaleX(-1);
   }
   
@@ -97,11 +97,11 @@
 
       .overlay-title{
         color:black; 
-        font-size:16px;
+        font-size:12px;
       }
     
       .overlay-title1{
-        color:'black';
-        font-size:'7px';
+        color:black !important;
+        font-size:9px !important;
       }
 }

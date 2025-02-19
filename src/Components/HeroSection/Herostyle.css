@@ -3,7 +3,7 @@
   flex-direction: column;
   align-items: center;
   gap: 50px; /* Space between rows */
-  margin-top: 20px;
+  margin-top: 70px;
 }
 
 .row {
@@ -57,6 +57,21 @@
   }
 }
 
+@media (min-width: 375px) {
+  .row {
+    flex-direction: row !important; /* Keep 3 per row */
+    gap: 40px !important; /* Maintain 10px gap */
+  }
+
+  .image-container {
+    width: 75px !important;
+    height: 85px !important;
+  }
+
+  .image-container p {
+    font-size: 12px;
+  }
+}
 @media (max-width: 320px) {
   .row {
     flex-direction: row; /* Keep 3 per row */

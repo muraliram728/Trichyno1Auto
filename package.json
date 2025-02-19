@@ -10,6 +10,7 @@
     "@mui/x-data-grid": "^7.26.0",
     "cra-template": "1.2.0",
     "firebase": "^11.2.0",
+    "framer-motion": "^12.4.4",
     "html2canvas": "^1.4.1",
     "jspdf": "^2.5.2",
     "react": "^19.0.0",

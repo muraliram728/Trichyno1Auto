@@ -10,6 +10,7 @@ import admin from '../../assets/images/admin.jpg';
 import Advertisement from "./ImageSlider/ImageSlider";
 import Review from './Review/Review';
 import Subfooter from './subfooter/subfooter';
+import { motion } from "framer-motion";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ const Hero = () => {
   const handleTripTrackerClick = () => navigate('/TripTracker');
   const handleserviceClick = () => navigate('/service');
   const handlememberClick = () => navigate('/member');
+  const handleSafeClick = () => navigate('/Safe');
+
 
   return (
     <div className="hero">
@@ -26,32 +29,80 @@ const Hero = () => {
       </div>
       <div className="image-section">
         <div className="row">
-          <div className="image-container" onClick={handleCostClick}>
+          <motion.div
+            className="image-container"
+            onClick={handleCostClick}
+            whileHover={{ scale: 1.1 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <img src={lowcost} alt="Low Cost" />
             <p>Low Cost</p>
-          </div>
-          <div className="image-container">
-            <img src={safe} alt="Safe" />
+          </motion.div>
+          <motion.div
+            className="image-container"
+            onClick={handleSafeClick}
+            whileHover={{ scale: 1.1 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+
+            <img src={safe} alt="Safe" onClick={handleSafeClick}/>
             <p>Safe</p>
-          </div>
-          <div className="image-container">
+          </motion.div>
+          <motion.div
+            className="image-container"
+            onClick={handleTripTrackerClick}
+            whileHover={{ scale: 1.1 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+
             <img src={auto} alt="Auto" onClick={handleTripTrackerClick} />
             <p>TripTracker</p>
-          </div>
+          </motion.div>
+
         </div>
         <div className="row">
-          <div className="image-container">
+          <motion.div
+            className="image-container"
+            onClick={handleserviceClick}
+            whileHover={{ scale: 1.1 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+
             <img src={service} alt="Service" onClick={handleserviceClick} />
             <p>Service</p>
-          </div>
-          <div className="image-container">
+          </motion.div>
+          <motion.div
+            className="image-container"
+            onClick={handlememberClick}
+            whileHover={{ scale: 1.1 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+
             <img src={customer} alt="Customer" onClick={handlememberClick} />
             <p>Members</p>
-          </div>
-          <div className="image-container" onClick={handleAdminClick}>
+          </motion.div>
+          <motion.div
+            className="image-container"
+            onClick={handleAdminClick}
+            whileHover={{ scale: 1.1 }}
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+
             <img src={admin} alt="Admin" />
             <p>Admin</p>
-          </div>
+          </motion.div>
         </div>
       </div>
       {/* <Review /> */}

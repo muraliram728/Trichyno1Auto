@@ -15,7 +15,7 @@ html, body {
   margin: 0; /* Remove default margin */
   padding: 0; /* Remove default padding */
   overflow-x: hidden; /* Prevent horizontal scrolling */
-  background-color: #f4f4f4;
+  background-color:lighten(grey, 40%);
 }
 
 /* body {
