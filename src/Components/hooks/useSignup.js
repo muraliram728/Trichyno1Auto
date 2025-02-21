@@ -6,7 +6,7 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 export const useSignup = () => {
   const [error, setError] = useState(null);
 
-  const signup = async ({ fname, lname, email, password,displayName, isAdmin = false, members = "no" , code, mobileNo = "", altMobileNo = "", aadhaarCardNo = "", address = ""}) => {
+  const signup = async ({ fname, lname, email, password,displayName, isAdmin = false, members = "no" , code, mobileNo = "", altMobileNo = "", aadhaarCardNo = "", address = "",license}) => {
     setError(null);
 
     try {
@@ -22,6 +22,7 @@ export const useSignup = () => {
       await setDoc(docRef, {
         fname,
         lname,
+        license,
         email,
         isAdmin : false, // Admin flag
         displayName: displayName,
@@ -37,6 +38,7 @@ export const useSignup = () => {
       console.log("Saving user details:", {
         fname,
         lname,
+        license,
         email,
         isAdmin,
         displayName,
