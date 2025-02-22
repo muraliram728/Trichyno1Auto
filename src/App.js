@@ -9,8 +9,9 @@ import Login from './Components/login/Login';
 import Signup from './Components/signup/Signup';
 import Cost from './Components/Cost/cost';
 import TripTracker from './Components/TripTracker/tripTracker';
-import Service from './Components/Services/services'
-import Member from './Components/Member/member'
+import Service from './Components/Services/services';
+import Member from './Components/Member/member';
+import About from './Components/About/about';
 
 function App() {
   return (
@@ -19,10 +20,11 @@ function App() {
         <Header />
         <div className="main-content">
           <Routes>
-            <Route path="/" element={<Hero />} /> {/* Hero for Home */}
+            <Route path="/" element={<Hero />} /> 
+            <Route path="/about" element={<About />} /> 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
-            <Route path="/admin" element={<Admin />} /> {/* Admin Page */}
+            <Route path="/admin" element={<Admin />} /> 
             <Route path="/cost" element={<Cost />} /> 
             <Route path="/triptracker" element={<TripTracker />} />
             <Route path="/service" element={<Service />} />

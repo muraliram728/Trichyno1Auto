@@ -34,21 +34,6 @@ export const useSignup = () => {
         address, 
         createdAt: serverTimestamp(), // Server-generated timestamp
       });
-
-      console.log("Saving user details:", {
-        fname,
-        lname,
-        license,
-        email,
-        isAdmin,
-        displayName,
-        members,
-        code,
-        mobileNo,
-        altMobileNo,
-        aadhaarCardNo, // Check the value before saving
-        address,
-      });
       console.log("User successfully signed up and signed in:", user.uid);
     } catch (err) {
       console.error("Signup error:", err.message);

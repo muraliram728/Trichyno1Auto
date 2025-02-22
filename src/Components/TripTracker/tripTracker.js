@@ -449,9 +449,9 @@ const TripTracker = () => {
             alignItems: "center",
           }}
         >
-          <div style={{ padding: "20px", backgroundColor: "#ffcccc", borderRadius: "10px", textAlign: "center" }}>
+          <div style={{ padding: "20px", backgroundColor: "#ffcccc", borderRadius: "10px", textAlign: "center",margin:"16%" }}>
             <h2 style={{ color: "red" }}>You are not a member!</h2>
-            <p>This is Trichy No.1 Auto. Please contact the admin to become a member.</p>
+            <p>Access Restricted. Only authorized members can access this. Please contact the admin for access.</p>
           </div>
         </div>
       )}
