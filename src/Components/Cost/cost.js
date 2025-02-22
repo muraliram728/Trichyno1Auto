@@ -1,68 +1,51 @@
-import React, { useState, useEffect } from 'react';
-import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import { auth } from '../../firebase/config'; // Your firebase config file
+import React, { useState, useEffect } from "react";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import "./cost.css"
 
 const Cost = () => {
-  const [price, setPrice] = useState(null); // For storing price from Firebase
-  const [kilometer, setKilometer] = useState('');
-  const [finalPrice, setFinalPrice] = useState(null); // For storing the calculated final price
+  const [pricingDetails, setPricingDetails] = useState(null); // Store price details
 
   useEffect(() => {
-    const fetchPrice = async () => {
+    const fetchPricingDetails = async () => {
       try {
         const db = getFirestore();
-        const priceDocRef = doc(db, 'price', 'currentPrice'); // Correct collection name "price"
+        const priceDocRef = doc(db, "price", "currentPrice"); // Reference to price document
         const docSnap = await getDoc(priceDocRef);
 
         if (docSnap.exists()) {
-          const fetchedPrice = docSnap.data().pricePerKm; // Correct field name "pricePerKm"
-          setPrice(fetchedPrice);
-          console.log("Price fetched from Firebase:", fetchedPrice);
+          setPricingDetails(docSnap.data()); // Store all pricing details
         } else {
-          console.log('No such document!');
+          console.log("No pricing details found!");
         }
       } catch (error) {
-        console.error('Error fetching price:', error);
+        console.error("Error fetching pricing details:", error);
       }
     };
 
-    fetchPrice();
+    fetchPricingDetails();
   }, []);
-
-  // Handle form submission to calculate final price
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    if (price && kilometer) {
-      const calculatedPrice = price * parseInt(kilometer, 10); // Multiply price by kilometers
-      setFinalPrice(calculatedPrice); // Set the final calculated price
-    } else {
-      console.log('Price or kilometer is missing');
-    }
-  };
 
   return (
     <div className="cost-container">
-      <h2 className="costtitle">Cost Calculator</h2>
-      {price !== null ? <h4>Cost per Km: ₹{price}</h4> : <h4>Loading price...</h4>}
-      <form onSubmit={handleSubmit}>
-        <div className="input-group">
-          <label>Kilometer:</label>
-          <input
-            type="number"
-            placeholder="Enter kilometers"
-            value={kilometer}
-            onChange={(e) => setKilometer(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Calculate Cost</button>
-      </form>
+      <h2 className="cost-title">Pricing Details</h2>
 
-      {/* Display final price if it's calculated */}
-      {finalPrice !== null && (
-        <div className="final-price">
-          <h3>Final Price: ₹{finalPrice}</h3>
+      {/* Show loading while fetching data */}
+      {!pricingDetails ? (
+        <p>Loading price details...</p>
+      ) : (
+        <div className="price-list">
+          <div className="price-card">
+            <h3>Cost per 1 Km</h3>
+            <p>₹{pricingDetails.pricePer1Km}</p>
+          </div>
+          <div className="price-card">
+            <h3>Cost per Km</h3>
+            <p>₹{pricingDetails.pricePerKm}</p>
+          </div>
+          <div className="price-card">
+            <h3>Waiting Fee</h3>
+            <p>₹{pricingDetails.waitingFee} per minute</p>
+          </div>
         </div>
       )}
     </div>

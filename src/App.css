@@ -1,13 +1,13 @@
 /* In your App.css or global CSS file */
-:root{
-  --main-color: #f6ce4a;
-}
 /* Ensures the page takes full height */
 *{
   padding: 0;
   margin: 0;
   box-sizing: border-box;
 }
+
+
+
 
 html, body {
   height: 100%; /* Full height of the viewport */
