@@ -1,5 +1,5 @@
 import React from 'react';
-import Bgimg from '../../../assets/images/bgimage.jpg';
+import Bgimg from '../../../assets/images/bgimage1.jpeg';
 import overlayimg from '../../../assets/images/overlayimg.png';
 import './subfooter.css';
 import { motion } from "framer-motion";
@@ -20,8 +20,8 @@ const subfooter = () => {
           transition={{ duration: 0.5 }}
         >
 
-          <h1 className='overlay-title' >Some Text Here</h1>
-          <p className='overlay-title1' >This is an example of text overlaying the background image.</p>
+          <h1 className='overlay-title' >Trusted by Thousands</h1>
+          <p className='overlay-title1' >Safe, reliable, and affordable transportation in your city.</p>
         </motion.div>
 
         {/* Overlay Image */}
