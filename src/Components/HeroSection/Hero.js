@@ -143,7 +143,7 @@ const Hero = () => {
           </motion.div>
         </div>
       </div>
-      {/* <Review /> */}
+      <Review />
       <Subfooter />
     </div>
   );
