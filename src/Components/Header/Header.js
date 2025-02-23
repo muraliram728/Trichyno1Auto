@@ -81,10 +81,10 @@ const Header = () => {
               </li>
             )}
           </ul>
-          <div className="icon" onClick={toggleMenu}>
-            <FaBars />
-          </div>
         </nav>
+        <div className="icon" onClick={toggleMenu}>
+          <FaBars />
+        </div>
       </div>
     </header>
   );

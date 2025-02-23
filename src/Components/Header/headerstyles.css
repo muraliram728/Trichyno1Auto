@@ -262,6 +262,14 @@ a {
     margin-bottom: 10px;
 }
 
+@media (min-width: 320px) and (max-width: 375px) {
+    .banner-text .para {
+        margin-top: -6px !important;
+    }
+
+}
+
+
 .banner-text p {
     font-size: 12px;
     margin-left: -97px;
