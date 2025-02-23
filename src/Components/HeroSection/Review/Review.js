@@ -71,103 +71,100 @@
 
 // export default Review;
 
+// import React from "react";
+// import Carousel from "react-multi-carousel";
+// import "react-multi-carousel/lib/styles.css";
+// import { Box, Typography, Card, CardContent, Rating } from "@mui/material";
 
+// const Reviews = [
+//     {
+//         name: "ReeganReena",
+//         role: "Customer",
+//         rating: 4,
+//         feedback:
+//             "It is an amazing app and very safe too to ride with as they have professional and great riders. It is also very feasible and we reach quicker. ",
+//     },
+//     {
+//         name: "AbineshMaha",
+//         role: "Customer",
+//         rating: 2,
+//         feedback:
+//             "It is an amazing app and very safe too to ride with as they have professional and great riders. It is also very feasible and we reach quicker. ",
+//     },
+//     // Add more Review as needed
+// ];
 
+// const Review = () => {
+//     const responsive = {
+//         desktop: {
+//             breakpoint: { max: 3000, min: 1024 },
+//             items: 2,
+//         },
+//         tablet: {
+//             breakpoint: { max: 1024, min: 768 },
+//             items: 2,
+//         },
+//         mobile: {
+//             breakpoint: { max: 768, min: 0 },
+//             items: 1,
+//         },
+//     };
 
-import React from "react";
-import Carousel from "react-multi-carousel";
-import "react-multi-carousel/lib/styles.css";
-import { Box, Typography, Card, CardContent, Rating } from "@mui/material";
+//     return (
+//         <Box sx={{ maxWidth: "80%", margin: "0 auto", position: "relative", marginTop: "50px" }}>
+//             <Carousel
+//                 responsive={responsive}
+//                 showDots
+//                 infinite
+//                 // autoPlay
+//                 // autoPlaySpeed={3000}
+//                 arrows={false}
+//             >
+//                 {Reviews.map((testimonial, index) => (
+//                     <Card key={index} sx={{ border: "1px solid #FFD700", borderRadius: 2, margin: 2, position: "relative" }}>
+//                         <Box
+//                             sx={{
+//                                 position: "relative",
+//                                 textAlign: "center",
+//                             }}
+//                         >
+//                             <Box
+//                                 sx={{
+//                                     position: "absolute",
+//                                     top: "0px",
+//                                     left: "50%",
+//                                     transform: "translateX(-50%)",
+//                                     height: "2px",
+//                                     backgroundColor: "#FFD700",
+//                                 }}
+//                             />
+//                             <Rating
+//                                 value={testimonial.rating}
+//                                 readOnly
+//                                 precision={0.5}
+//                                 icon={<span>★</span>}
+//                                 emptyIcon={<span>★</span>}
+//                                 sx={{ color: "#FFD700", position: "relative", zIndex: 101 }} // Ensures the rating stars stay on top
+//                             />
+//                         </Box>
+//                         <CardContent>
+//                             <Typography variant="body1">
+//                                 {testimonial.feedback}
+//                             </Typography>
+//                             <Typography variant="h6" sx={{ marginTop: 2, fontWeight: "bold" }}>
+//                                 {testimonial.name}
+//                             </Typography>
+//                             <Typography variant="body2" color="text.secondary">
+//                                 {testimonial.role}
+//                             </Typography>
+//                         </CardContent>
+//                     </Card>
 
-const Reviews = [
-    {
-        name: "ReeganReena",
-        role: "Customer",
-        rating: 4,
-        feedback:
-            "It is an amazing app and very safe too to ride with as they have professional and great riders. It is also very feasible and we reach quicker. ",
-    },
-    {
-        name: "AbineshMaha",
-        role: "Customer",
-        rating: 2,
-        feedback:
-            "It is an amazing app and very safe too to ride with as they have professional and great riders. It is also very feasible and we reach quicker. ",
-    },
-    // Add more Review as needed
-];
+//                 ))}
 
-const Review = () => {
-    const responsive = {
-        desktop: {
-            breakpoint: { max: 3000, min: 1024 },
-            items: 2,
-        },
-        tablet: {
-            breakpoint: { max: 1024, min: 768 },
-            items: 2,
-        },
-        mobile: {
-            breakpoint: { max: 768, min: 0 },
-            items: 1,
-        },
-    };
+//             </Carousel>
+//         </Box>
+//     );
+// };
 
-    return (
-        <Box sx={{ maxWidth: "80%", margin: "0 auto", position: "relative", marginTop: "50px" }}>
-            <Carousel
-                responsive={responsive}
-                showDots
-                infinite
-                // autoPlay
-                // autoPlaySpeed={3000}
-                arrows={false}
-            >
-                {Reviews.map((testimonial, index) => (
-                    <Card key={index} sx={{ border: "1px solid #FFD700", borderRadius: 2, margin: 2, position: "relative" }}>
-                        <Box
-                            sx={{
-                                position: "relative",
-                                textAlign: "center",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    position: "absolute",
-                                    top: "0px",
-                                    left: "50%",
-                                    transform: "translateX(-50%)",
-                                    height: "2px",
-                                    backgroundColor: "#FFD700",
-                                }}
-                            />
-                            <Rating
-                                value={testimonial.rating}
-                                readOnly
-                                precision={0.5}
-                                icon={<span>★</span>}
-                                emptyIcon={<span>★</span>}
-                                sx={{ color: "#FFD700", position: "relative", zIndex: 101 }} // Ensures the rating stars stay on top
-                            />
-                        </Box>
-                        <CardContent>
-                            <Typography variant="body1">
-                                {testimonial.feedback}
-                            </Typography>
-                            <Typography variant="h6" sx={{ marginTop: 2, fontWeight: "bold" }}>
-                                {testimonial.name}
-                            </Typography>
-                            <Typography variant="body2" color="text.secondary">
-                                {testimonial.role}
-                            </Typography>
-                        </CardContent>
-                    </Card>
-
-                ))}
-
-            </Carousel>
-        </Box>
-    );
-};
-
-export default Review;
+// export default Review;

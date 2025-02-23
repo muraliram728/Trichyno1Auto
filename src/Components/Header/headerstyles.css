@@ -128,7 +128,7 @@ a {
 }
 
 /* Responsive Design */
-@media (min-width: 320px) and (max-width: 768px) {
+@media (max-width: 768px) {
     header {
         background-color: #FFCC00;
         height: 200px;
@@ -169,8 +169,8 @@ a {
     .icon {
         color: white;
         display: block;
-        margin-top: -161px;
-        margin-left: 378px;
+        margin-top: -94px;
+        margin-left: 711px;
     }
 
 /* Sidebar Container */
@@ -295,11 +295,11 @@ a {
 }
 }
 
-/* @media (max-width: 375px) {
+@media (max-width: 376px) {
 
     header {
         background-color: #FFCC00;
-        height: 200px;
+        height: 159px !important;
     }
 
     .banner-container{
@@ -337,8 +337,8 @@ a {
     .icon {
         color: white;
         display: block;
-        margin-top: -237px !important;
-        margin-left: 329px !important;
+        margin-top: -90px !important;
+        margin-left: 298px  !important;
     }
 
 .Container .nav-link {
@@ -447,4 +447,32 @@ a {
     transition: 0.3s ease-in-out;
 }
 
-} */
+}
+
+@media (max-width: 426px) {
+.icon {
+    color: white;
+    display: block;
+    margin-top: -90px !important;
+    margin-left: 381px  !important;
+}
+}
+
+@media (max-width: 376px) {
+    .icon {
+        color: white;
+        display: block;
+        margin-top: -90px !important;
+        margin-left: 330px  !important;
+    }
+    }
+
+    @media (max-width: 321px) {
+        .icon {
+            color: white;
+            display: block;
+            margin-top: -77px !important;
+            margin-left: 272px !important;
+        }
+        }
+    
