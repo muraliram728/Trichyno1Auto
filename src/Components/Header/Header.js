@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   AppBar,
   Toolbar,
@@ -16,10 +16,22 @@ import Logo from "../../assets/images/TRYNO1AUTO LOGO.png";
 import { FaBars } from "react-icons/fa";
 import "./headerstyles.css";
 import { Link, useLocation } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "../../firebase/config";
+import Logout from "./Logout";
 
 const Header = () => {
   const isSmallScreens = useMediaQuery("(max-width:768px)");
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUser(user);
+    });
+
+    return () => unsubscribe(); // Cleanup listener on unmount
+  }, []);
 
   const toggleDrawer = (open) => {
     setDrawerOpen(open);
@@ -154,7 +166,6 @@ const Header = () => {
                     {[
                       { to: "/", label: "Home" },
                       { to: "/about", label: "About" },
-                      { to: "/signup", label: "Register/Login" },
                     ].map((item, index) => (
                       <ListItem
                         key={index}
@@ -177,6 +188,26 @@ const Header = () => {
                         </ListItemText>
                       </ListItem>
                     ))}
+                    {/* Conditionally Show Logout or Register/Login */}
+                    <ListItem button sx={drawerItemStyles}>
+                      <ListItemText>
+                        {user ? (
+                          <Logout /> // Show Logout button if logged in
+                        ) : (
+                          <Link
+                            to="/signup"
+                            style={{
+                              ...linkStyles,
+                              ...(location.pathname === "/signup"
+                                ? activeLinkStyles
+                                : {}),
+                            }}
+                          >
+                            Register/Login
+                          </Link>
+                        )}
+                      </ListItemText>
+                    </ListItem>
                   </List>
                 </Drawer>
               </>
@@ -208,17 +239,22 @@ const Header = () => {
                 >
                   About
                 </Link>
-                <Link
-                  to="/signup"
-                  style={{
-                    ...linkStyles,
-                    ...(location.pathname === "/signup"
-                      ? activeLinkStyles
-                      : {}),
-                  }}
-                >
-                  Register/Login
-                </Link>
+                {/* Conditionally Show Logout or Register/Login */}
+                {user ? (
+                  <Logout /> // Show Logout button if logged in
+                ) : (
+                  <Link
+                    to="/signup"
+                    style={{
+                      ...linkStyles,
+                      ...(location.pathname === "/signup"
+                        ? activeLinkStyles
+                        : {}),
+                    }}
+                  >
+                    Register/Login
+                  </Link>
+                )}
               </Box>
             )}
           </Box>
