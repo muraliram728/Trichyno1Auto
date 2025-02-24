@@ -1,492 +1,91 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Merriweather:wght@300;700&family=Roboto:wght@400;500&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Roboto:wght@300;400;700&display=swap");
 
-header {
-    background-color: #FFCC00;
-    height: 250px;
-}
 
-.banner-container{
-    display: flex !important;
-    justify-content: space-between!important;
-    flex-direction: row!important;
-    margin: 30px;
-}
-
-.logo{
-    width: 225px;
-    height: 167px;
-    cursor: pointer;
-    transition: transform 0.3s ease-in-out;
-}
-
-.logo:hover {
-    transform: scale(1.05); 
-}
-
-.banner-img{
-    max-width: 310px;
-    height: auto;
-    transition: transform 0.3s ease-in-out;
-}
-
-.banner-img:hover {
-    transform: scale(1.05);
-}
-
-.Container nav {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-a {
-    text-decoration: none;
-}
-
-.Container .nav-link {
-    display: flex;
-    margin-top: -136px;
-    margin-left: 39%;
-}
-
-.Container .nav-link li {
-    list-style: none;
-}
-
-.Container ul li a {
-    padding: 0.7rem 1rem;
-    display: block;
-}
-
-.Container ul li a:hover,
-.Container ul li a.active {
-    font-weight: 1000;
-    color: #1E3A8A !important;
-}
-
-.icon {
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: none;
-}
-
-.banner-text {
-    text-align: center; 
-    width: 100%; 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    justify-content: center;
-    margin-bottom: 59px;
-    font-family: 'Poppins', sans-serif;
-}
-
-.banner-text h1 {
-    font-size: 40px;
-    font-weight: 700;
-    font-family: 'Merriweather', serif;
-    color: #ffffff;
-    margin-bottom: 10px;
-}
-
-.banner-text .highlight-word {
-    color: #000000;  /* Eye-catching red */
-    font-weight: bold;
-    font-size: 42px;
-    text-transform: uppercase;
-}
-
-.banner-text .para {
-    font-size: 18px;
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
-    color: #212020;
-    margin-bottom: 10px;
-}
-
-.banner-text p {
-    font-size: 16px;
-    font-family: 'Roboto', sans-serif;
-    font-style: italic;
-    color: #343232;
-}
-
-.forum {
-    font-size: 20px;
-    font-weight: 600;
-    font-family: 'Merriweather', serif;
-    color: #444;
-    letter-spacing: 1px;
-}
-
-/* ✨ Smooth Hover Effects */
-.banner-text h1:hover, 
-.banner-text h2:hover, 
-.banner-text .highlight-word:hover {
-    color: #ff5722;
-    transition: 0.3s ease-in-out;
-}
-
-/* Responsive Design */
 @media (max-width: 768px) {
-    header {
-        background-color: #FFCC00;
-        height: 200px;
+    .responsive-logo {
+      width: 100px !important; /* Smaller width on mobile */
+      height: 80px !important; /* Smaller height on mobile */
     }
-
-    .banner-container{
-        display: flex !important;
-        justify-content: space-between!important;
-        flex-direction: row!important;
-        margin: 0px;
-    }
-
-    .logo{
-        width: 126px;
-        height: 100px;
-        margin-left: -23px;
-        cursor: pointer;
-        transition: transform 0.3s ease-in-out;
-        margin-top: 10px;
-    }
-
-    .logo:hover {
-        transform: scale(1.05); 
-    }
-
-    .banner-img{
-        max-width: 124px;
-        height: auto;
-        margin-top: 21px;
-        transition: transform 0.3s ease-in-out;
-        margin-top: 15px;
+    .Auto-Picture{
+        width: 110px !important; /* Smaller width on mobile */
+        height: 90px !important; /* Smaller height on mobile */
     }
     
-    .banner-img:hover {
-        transform: scale(1.05);
+  }
+  
+  @media (max-width: 480px) {
+    .responsive-logo {
+        width: 119px !important;
+        height: 90px !important;
+        margin-left: -31px;
     }
-
-    .icon {
-        color: white;
-        display: block;
-        margin-top: -94px;
-        margin-left: 711px;
+    .Auto-Picture{
+        width: 110px !important; /* Smaller width on mobile */
+        height: 90px !important; /* Smaller height on mobile */
+        margin-right: -20px;
     }
+  }
 
-/* Sidebar Container */
-.Container .nav-link {
-    flex-direction: column;
-    justify-content: space-evenly;
-    background-color: #ffffff; /* White background */
-    position: absolute;
-    width: 280px;
-    height: 60vh;
-    top: -800px; /* Initially hidden */
-    left: 0;
-    z-index: 10;
-    transition: all 0.7s ease-in-out;
-    margin-top: 127px;
-    padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
-}
-
-/* When Sidebar is Active */
-.nav-link.active {
-    top: 12%;
-    transition: all 0.7s ease-in;
-}
-
-/* Sidebar Links */
-.nav-link li {
-    list-style: none;
-    padding: 10px 0;
-    text-align: left;
-    font-size: 16px;
-}
-
-/* Sidebar Links Styling */
-.nav-link li a {
-    text-decoration: none;
-    color: #000000; /* Black text */
-    font-weight: 500;
-    display: block;
-    padding: 8px 15px;
-    transition: color 0.3s ease-in-out;
-}
-
-/* Hover Effect */
-.nav-link li a:hover {
-    color: #FFD700; /* Yellow on hover */
-}
-
-/* Horizontal Line */
-.nav-link li:not(:last-child) {
-    border-bottom: 1px solid #ddd; /* Light gray horizontal line */
-}
-
-.banner-text {
-    text-align: center; 
-    width: 100%; 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    justify-content: center;
-    margin-top: 42px;
-    font-family: 'Poppins', sans-serif;
-}
-
-
-
-.banner-text h1 {
-    font-size: 22px;
-    font-weight: 700;
-    font-family: 'Merriweather', serif;
-    color: #ffffff;
-    margin-bottom: 10px;
-}
-
-.banner-text .highlight-word {
-    color: #000000;  /* Eye-catching red */
-    font-weight: bold;
-    font-size: 22px;
-    text-transform: uppercase;
-}
-
-.banner-text .para {
-    font-size: 12px;
-    margin-top: 36px;
-    margin-left: -150px;
-    font-weight: 500;
-    font-family: 'Poppins', sans-serif;
-    color: #212020;
-    margin-bottom: 10px;
-}
-
-@media (min-width: 320px) and (max-width: 375px) {
-    .banner-text .para {
-        margin-top: -6px !important;
-    }
-
-}
-
-
-.banner-text p {
-    font-size: 12px;
-    margin-left: -97px;
-    font-family: 'Roboto', sans-serif;
-    font-style: italic;
-    color: #343232;
-}
-
-.forum {
-    font-size: 15px;
-    font-weight: 600;
-    font-family: 'Merriweather', serif;
-    color: #444;
-    letter-spacing: 1px;
-}
-
-/* ✨ Smooth Hover Effects */
-.banner-text h1:hover, 
-.banner-text h2:hover, 
-.banner-text .highlight-word:hover {
-    color: #ff5722;
-    transition: 0.3s ease-in-out;
-}
-}
-
-
-.banner-imgnew{
-    max-width: 150px;
-    height: 150px;
-    margin-top: 21px;
-    transition: transform 0.3s ease-in-out;
-    margin-top: 15px;
-}
-
-.banner-img:hover {
-    transform: scale(1.05);
-}
-
-
-/* @media (max-width: 375px) {
-
-    header {
-        background-color: #FFCC00;
-        height: 159px !important;
-    }
-
-    .banner-container{
-        display: flex !important;
-        justify-content: space-between!important;
-        flex-direction: row!important;
-        margin: 0px;
-    }
-
-    .logo{
-        width: 100px;
-        height: 80px;
-        margin-left: -23px;
-        cursor: pointer;
-        transition: transform 0.3s ease-in-out;
-        margin-top: 10px;
-    }
-
-    .logo:hover {
-        transform: scale(1.05); 
-    }
-
-    .banner-img{
-        max-width: 104px;
-        height: auto;
-        margin-top: 21px;
-        transition: transform 0.3s ease-in-out;
-        margin-top: 15px;
-    }
-    
-    .banner-img:hover {
-        transform: scale(1.05);
-    }
-
-    .icon {
-        color: white;
-        display: block;
-        margin-top: -90px !important;
-        margin-left: 298px  !important;
-    }
-
-.Container .nav-link {
-    flex-direction: column;
-    justify-content: space-evenly;
-    background-color: #ffffff; 
-    position: absolute;
-    width: 192px;
-    height: 60vh;
-    top: -800px; 
-    left: 0;
-    z-index: 10;
-    transition: all 0.7s ease-in-out;
-    margin-top: 127px;
-    padding: 20px;
-    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1); 
-}
-
-.nav-link.active {
-    top: 12%;
-    transition: all 0.7s ease-in;
-}
-
-.nav-link li {
-    list-style: none;
-    padding: 10px 0;
-    text-align: left;
-    font-size: 16px;
-}
-
-.nav-link li a {
-    text-decoration: none;
-    color: #000000; 
-    font-weight: 500;
-    display: block;
-    padding: 8px 15px;
-    transition: color 0.3s ease-in-out;
-}
-
-.nav-link li a:hover {
-    color: #FFD700; 
-}
-
-.nav-link li:not(:last-child) {
-    border-bottom: 1px solid #ddd; 
-}
-
-.banner-text {
-    text-align: center; 
-    width: 100%; 
-    display: flex;
-    flex-direction: column;
-    align-items: center; 
-    justify-content: center;
-    margin-top: 27px;
-    font-family: 'Poppins', sans-serif;
-}
-
-
-
-.banner-text h1 {
+  .main-title span{
+    font-size: 40px;
+    font-family: "Poppins", sans-serif; /* Professional font */
+  }
+  .title {
+    font-size: 20px;
+    font-weight: 600; /* Bold weight for title */
+    color: #333;
+    font-family: "Poppins", sans-serif; /* Professional font */
+  }
+  
+  .subtitle {
     font-size: 18px;
-    font-weight: 700;
-    font-family: 'Merriweather', serif;
-    color: #ffffff;
-    margin-bottom: 10px;
-}
-
-.banner-text .highlight-word {
-    color: #000000;  
-    font-weight: bold;
-    font-size: 18px;
-    text-transform: uppercase;
-}
-
-.banner-text .para {
-    font-size: 8px;
-    margin-top: 36px;
-    margin-left: -117px;
     font-weight: 500;
-    font-family: 'Poppins', sans-serif;
-    color: #212020;
-    margin-bottom: 10px;
-}
-
-.banner-text p {
-    font-size: 8px;
-    margin-left: -69px;
-    font-family: 'Roboto', sans-serif;
-    font-style: italic;
-    color: #343232;
-}
-
-.forum {
-    font-size: 10px;
-    font-weight: 600;
-    font-family: 'Merriweather', serif;
-    color: #444;
-    letter-spacing: 1px;
-}
-
-.banner-text h1:hover, 
-.banner-text h2:hover, 
-.banner-text .highlight-word:hover {
-    color: #ff5722;
-    transition: 0.3s ease-in-out;
-}
-
-}
-
-@media (max-width: 426px) {
-.icon {
-    color: white;
-    display: block;
-    margin-top: -90px !important;
-    margin-left: 381px  !important;
-}
-}
-
-@media (max-width: 376px) {
-    .icon {
-        color: white;
-        display: block;
-        margin-top: -90px !important;
-        margin-left: 330px  !important;
+    color: #222;
+    font-family: "Roboto", sans-serif; /* Clean and modern */
+  }
+  
+  .quote {
+    font-size: 80%;
+    color: black;
+    font-style: italic; /* Makes the quote more stylish */
+    font-family: "Montserrat", sans-serif;
+  }
+  
+  /* Tablet View */
+  @media (max-width: 768px) {
+    .main-title span{
+        font-size: 25px;
+        font-family: "Poppins", sans-serif; /* Professional font */
+      }
+    .title {
+      font-size: 14px;
     }
+  
+    .subtitle {
+      font-size: 12px;
     }
-
-    @media (max-width: 321px) {
-        .icon {
-            color: white;
-            display: block;
-            margin-top: -77px !important;
-            margin-left: 272px !important;
-        }
-        }
-    
+  
+    .quote {
+      font-size: 85%;
+    }
+  }
+  
+  /* Mobile View */
+  @media (max-width: 480px) {
+    .main-title span{
+        font-size: 15px;
+        font-family: "Poppins", sans-serif; /* Professional font */
+      }
+    .title {
+      font-size: 12px;
+    }
+  
+    .subtitle {
+      font-size: 10px;
+    }
+  
+    .quote {
+      font-size: 50%;
+    }
+  }
+  
