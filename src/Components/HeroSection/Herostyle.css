@@ -73,7 +73,7 @@
   }
 }
 
-@media (min-width: 375px) {
+@media (max-width: 426px) {
   h2 {
     font-size: 15px;
     font-weight: 300;
@@ -84,7 +84,7 @@
 
   .row {
     flex-direction: row !important; /* Keep 3 per row */
-    gap: 40px !important; /* Maintain 10px gap */
+    gap: 35px !important; /* Maintain 10px gap */
   }
 
   .image-container {
@@ -96,7 +96,31 @@
     font-size: 12px;
   }
 }
-@media (max-width: 320px) {
+
+@media (max-width: 376px) {
+  h2 {
+    font-size: 15px;
+    font-weight: 300;
+    font-family: 'Roboto', sans-serif;
+    color: #252424;
+    margin-bottom: 8px;
+}
+
+  .row {
+    flex-direction: row !important; /* Keep 3 per row */
+    gap: 35px !important; /* Maintain 10px gap */
+  }
+
+  .image-container {
+    width: 75px !important;
+    height: 85px !important;
+  }
+
+  .image-container p {
+    font-size: 12px;
+  }
+}
+@media (max-width: 321px) {
    h2 {
     font-size: 12px;
     font-weight: 300;

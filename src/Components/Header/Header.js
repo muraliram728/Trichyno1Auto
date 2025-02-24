@@ -70,12 +70,14 @@ const Header = () => {
         >
           {/* Logo Section */}
           <Box>
-            <img
-              className="responsive-logo"
-              src={Logo}
-              alt="Logo"
-              style={{ width: 140, height: 110, borderRadius: "50%" }}
-            />
+            <Link to="/">
+              <img
+                className="responsive-logo"
+                src={Logo}
+                alt="Logo"
+                style={{ width: 140, height: 110, borderRadius: "50%" }}
+              />
+            </Link>
           </Box>
 
           {/* Title Section */}
@@ -136,7 +138,7 @@ const Header = () => {
                 {/* Hamburger Menu Icon */}
                 <IconButton
                   onClick={() => toggleDrawer(true)}
-                  sx={{ color: "white", marginTop: "70px" }}
+                  sx={{ color: "white", marginTop: "30px" }}
                   className="Hamburger-btn"
                 >
                   <FaBars />
