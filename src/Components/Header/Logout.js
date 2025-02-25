@@ -31,7 +31,7 @@ const Logout = () => {
     fontWeight: "bold",
     padding: "8px 16px",
     display: "block",
-    cursor: "pointer", // Makes it behave like a link
+    cursor: "pointer",
     background: "none",
     border: "none",
     outline: "none",
