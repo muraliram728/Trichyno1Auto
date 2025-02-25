@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { db, auth } from "../../firebase/config"; // Import Firebase
 import { getAuth } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
-import './tripTracker.css';
+import "./tripTracker.css";
 import html2canvas from "html2canvas";
 import { jsPDF } from "jspdf";
 
@@ -29,8 +29,8 @@ const TripTracker = () => {
   });
   const [isDownloading, setIsDownloading] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [currentUserName, setCurrentUserName] = useState('');
-  const [code, setCode] = useState('');
+  const [currentUserName, setCurrentUserName] = useState("");
+  const [code, setCode] = useState("");
   const [isFirstKilometer, setIsFirstKilometer] = useState(true);
   const [isMember, setIsMember] = useState(false);
 
@@ -70,14 +70,18 @@ const TripTracker = () => {
           }
 
           if (priceData.waitingFee !== undefined) {
-            console.log(`Fetched Waiting Fee per Minute: ₹${priceData.waitingFee}`);
+            console.log(
+              `Fetched Waiting Fee per Minute: ₹${priceData.waitingFee}`
+            );
             setWaitingFee(priceData.waitingFee); // Set waitingFee correctly
           } else {
             console.warn("Waiting fee not found in Firestore.");
           }
 
           if (priceData.pricePer1Km !== undefined) {
-            console.log(`Fetched subsequent Fee per 1 km : ₹${priceData.pricePer1Km}`);
+            console.log(
+              `Fetched subsequent Fee per 1 km : ₹${priceData.pricePer1Km}`
+            );
             setPricePer1Km(priceData.pricePer1Km); // Set pricePer1Km correctly
           } else {
             console.warn("Subsequent fee per 1 km not found in Firestore.");
@@ -134,9 +138,9 @@ const TripTracker = () => {
     const a =
       Math.sin(dLat / 2) * Math.sin(dLat / 2) +
       Math.cos(lat1 * (Math.PI / 180)) *
-      Math.cos(lat2 * (Math.PI / 180)) *
-      Math.sin(dLon / 2) *
-      Math.sin(dLon / 2);
+        Math.cos(lat2 * (Math.PI / 180)) *
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
 
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distanceInMeters = R * c * 1000; // Convert to meters
@@ -152,7 +156,7 @@ const TripTracker = () => {
     setAmount(0);
     setLastPosition(null);
     let isFirstUpdate = true;
-    let gpsUpdateCount = 0;  // Track GPS updates to ignore first few
+    let gpsUpdateCount = 0; // Track GPS updates to ignore first few
 
     const isNight = isNightTime();
     const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
@@ -181,11 +185,17 @@ const TripTracker = () => {
 
           if (!prevPosition) return { lat: latitude, lon: longitude };
 
-          const distMeters = calculateDistance(prevPosition.lat, prevPosition.lon, latitude, longitude);
-          const distKm = distMeters / 1000;  // Convert meters to km
+          const distMeters = calculateDistance(
+            prevPosition.lat,
+            prevPosition.lon,
+            latitude,
+            longitude
+          );
+          const distKm = distMeters / 1000; // Convert meters to km
 
           // 🚨 **Fix GPS Drift Issues**
-          if (distMeters < 10) {  // Ignore changes less than 10 meters
+          if (distMeters < 10) {
+            // Ignore changes less than 10 meters
             console.log("Ignoring small movement (drift).");
             return prevPosition;
           }
@@ -227,7 +237,6 @@ const TripTracker = () => {
     setTimerId(interval);
   };
 
-
   // Start waiting time tracking (Continues from previous value)
   const startWaiting = () => {
     const isNight = isNightTime();
@@ -245,7 +254,11 @@ const TripTracker = () => {
       const totalFee = completedMinutes * currentWaitingFee; // Multiply by currentWaitingFee per minute
       setTotalWaitingFee(totalFee); // Update total waiting fee
 
-      console.log(`Waiting Time: ${completedMinutes} minutes ${newElapsedSeconds % 60} seconds`);
+      console.log(
+        `Waiting Time: ${completedMinutes} minutes ${
+          newElapsedSeconds % 60
+        } seconds`
+      );
       console.log(`Total Waiting Fee: ₹${totalFee.toFixed(2)}`);
     }, 1000); // Update every second
 
@@ -256,7 +269,6 @@ const TripTracker = () => {
   const stopWaiting = () => {
     if (timerId) clearInterval(timerId); // Stop the timer
   };
-
 
   // Stop trip and calculate total fare
   const stopTrip = () => {
@@ -283,13 +295,20 @@ const TripTracker = () => {
     setIsRunning(false);
 
     // Log final values
-    console.log(`Final Waiting Time: ${Math.floor(finalWaitingTime / 60)} minutes ${finalWaitingTime % 60} seconds`);
+    console.log(
+      `Final Waiting Time: ${Math.floor(finalWaitingTime / 60)} minutes ${
+        finalWaitingTime % 60
+      } seconds`
+    );
     console.log(`Final Waiting Fee: ₹${finalWaitingFee.toFixed(2)}`);
-    console.log(`Final Trip Time: ${Math.floor(finalTripTime / 60)} minutes ${finalTripTime % 60} seconds`);
+    console.log(
+      `Final Trip Time: ${Math.floor(finalTripTime / 60)} minutes ${
+        finalTripTime % 60
+      } seconds`
+    );
     console.log(`Final Distance: ${finalDistance} km`);
     console.log(`Final Distance Amount: ₹${finalDistanceAmount}`);
   };
-
 
   const downloadInvoice = () => {
     const invoiceElement = document.getElementById("invoice");
@@ -319,7 +338,6 @@ const TripTracker = () => {
   const isNight = isNightTime(); // Check if it's night time
   const currentPricePerKm = isNight ? pricePerKm * 1.5 : pricePerKm;
 
-
   if (isMember === null) {
     return <p>Loading...</p>; // Show loading state before membership status is determined
   }
@@ -333,12 +351,16 @@ const TripTracker = () => {
             {currentUser && <p>Welcome, {currentUserName}!</p>}
             <div className="trip-detail">
               <span className="label">Minimum Price per km:</span>
-              <span className="value">₹{currentPricePerKm.toFixed(2)} ({isNight ? "Night" : "Day"})</span>
+              <span className="value">
+                ₹{currentPricePerKm.toFixed(2)} ({isNight ? "Night" : "Day"})
+              </span>
             </div>
 
             <div className="trip-detail">
               <span className="label">Waiting Fee per Minute:</span>
-              <span className="value">₹{waitingFee !== null ? waitingFee : "Loading..."}</span>
+              <span className="value">
+                ₹{waitingFee !== null ? waitingFee : "Loading..."}
+              </span>
             </div>
 
             <div className="trip-detail">
@@ -346,15 +368,18 @@ const TripTracker = () => {
               <span className="value">₹{pricePer1Km}</span>
             </div>
 
-
             <div className="trip-detail">
               <span className="label">Trip Time:</span>
-              <span className="value">{new Date(time * 1000).toISOString().substr(11, 8)}</span>
+              <span className="value">
+                {new Date(time * 1000).toISOString().substr(11, 8)}
+              </span>
             </div>
 
             <div className="trip-detail">
               <span className="label">Distance:</span>
-              <span className="value">{Math.floor(distance)} km {Math.round((distance % 1) * 1000)} m</span>
+              <span className="value">
+                {Math.floor(distance)} km {Math.round((distance % 1) * 1000)} m
+              </span>
             </div>
 
             <div className="trip-detail">
@@ -364,7 +389,10 @@ const TripTracker = () => {
 
             <div className="trip-detail">
               <span className="label">Waiting Time:</span>
-              <span className="value">{Math.floor(waitingTimeInSeconds / 60)} min {waitingTimeInSeconds % 60} sec</span>
+              <span className="value">
+                {Math.floor(waitingTimeInSeconds / 60)} min{" "}
+                {waitingTimeInSeconds % 60} sec
+              </span>
             </div>
 
             <div className="trip-detail">
@@ -385,8 +413,9 @@ const TripTracker = () => {
               </div>
             )}
 
-            <h3 className="fare">Total Fare: ₹{(amount + totalWaitingFee).toFixed(2)}</h3>
-
+            <h3 className="fare">
+              Total Fare: ₹{(amount + totalWaitingFee).toFixed(2)}
+            </h3>
           </div>
           {/* Display Final Trip Details */}
           {!isRunning && (
@@ -397,39 +426,50 @@ const TripTracker = () => {
               {/* Display current user's name */}
               <div className="invoice-row">
                 <span className="invoice-label">User Name:</span>
-                <span className="invoice-value">{currentUserName}</span> {/* Assuming currentUserName is the variable holding the user's name */}
+                <span className="invoice-value">{currentUserName}</span>{" "}
+                {/* Assuming currentUserName is the variable holding the user's name */}
               </div>
               <div className="invoice-details">
                 <div className="invoice-row">
                   <span className="invoice-label">Final Distance:</span>
                   <span className="invoice-value">
-                    {Math.floor(finalTripDetails.finalDistance)} km {Math.round((finalTripDetails.finalDistance % 1) * 1000)} m
+                    {Math.floor(finalTripDetails.finalDistance)} km{" "}
+                    {Math.round((finalTripDetails.finalDistance % 1) * 1000)} m
                   </span>
                 </div>
                 <div className="invoice-row">
                   <span className="invoice-label">Final Distance Amount:</span>
-                  <span className="invoice-value">₹{finalTripDetails.finalDistanceAmount.toFixed(2)}</span>
+                  <span className="invoice-value">
+                    ₹{finalTripDetails.finalDistanceAmount.toFixed(2)}
+                  </span>
                 </div>
                 <div className="invoice-row">
                   <span className="invoice-label">Final Waiting Time:</span>
                   <span className="invoice-value">
-                    {Math.floor(finalTripDetails.finalWaitingTime / 60)} min {finalTripDetails.finalWaitingTime % 60} sec
+                    {Math.floor(finalTripDetails.finalWaitingTime / 60)} min{" "}
+                    {finalTripDetails.finalWaitingTime % 60} sec
                   </span>
                 </div>
                 <div className="invoice-row">
                   <span className="invoice-label">Final Waiting Fee:</span>
-                  <span className="invoice-value">₹{finalTripDetails.finalWaitingFee.toFixed(2)}</span>
+                  <span className="invoice-value">
+                    ₹{finalTripDetails.finalWaitingFee.toFixed(2)}
+                  </span>
                 </div>
                 <div className="invoice-row">
                   <span className="invoice-label">Final Trip Time:</span>
                   <span className="invoice-value">
-                    {new Date(finalTripDetails.finalTripTime * 1000).toISOString().substr(11, 8)}
+                    {new Date(finalTripDetails.finalTripTime * 1000)
+                      .toISOString()
+                      .substr(11, 8)}
                   </span>
                 </div>
               </div>
               <div className="invoice-total">
                 <span className="total-label">Total Fare:</span>
-                <span className="total-value">₹{(amount + totalWaitingFee).toFixed(2)}</span>
+                <span className="total-value">
+                  ₹{(amount + totalWaitingFee).toFixed(2)}
+                </span>
               </div>
               <button
                 className="download-button"
@@ -449,9 +489,20 @@ const TripTracker = () => {
             alignItems: "center",
           }}
         >
-          <div style={{ padding: "20px", backgroundColor: "#ffcccc", borderRadius: "10px", textAlign: "center",margin:"16%" }}>
+          <div
+            style={{
+              padding: "20px",
+              backgroundColor: "#ffcccc",
+              borderRadius: "10px",
+              textAlign: "center",
+              margin: "16%",
+            }}
+          >
             <h2 style={{ color: "red" }}>You are not a member!</h2>
-            <p>Access Restricted. Only authorized members can access this. Please contact the admin for access.</p>
+            <p>
+              Access Restricted. Only authorized members can access this. Please
+              contact the admin for access.
+            </p>
           </div>
         </div>
       )}
