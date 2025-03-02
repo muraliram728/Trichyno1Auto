@@ -207,11 +207,11 @@ const TripTracker = () => {
             console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
 
             let newAmount;
-            if (newDistance <= 1) {
+            if (newDistance <= 1.5) {
               newAmount = currentPricePerKm * newDistance;
             } else {
               newAmount = currentPricePerKm;
-              let extraKm = newDistance - 1;
+              let extraKm = newDistance - 1.5;
               newAmount += extraKm * currentPricePer1Km;
             }
 

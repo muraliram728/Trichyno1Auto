@@ -105,7 +105,7 @@ const Header = () => {
               className="main-title"
             >
               <span style={{ color: "#333333" }}>Trichy</span>{" "}
-              <span>No.1 Auto</span>
+              <span>No..1 Auto</span>
             </Typography>
           </Box>
 
