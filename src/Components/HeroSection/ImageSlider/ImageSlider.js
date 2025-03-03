@@ -3,7 +3,7 @@ import "./ImageSlider.css";
 
 const images = [
   {
-    url: "https://images3.alphacoders.com/885/885171.jpg",
+    url: "https://thewowstyle.com/wp-content/uploads/2015/01/nature-images-6.jpg",
   },
   {
     url: "https://www.pixelstalk.net/wp-content/uploads/2016/07/Wallpapers-pexels-photo.jpg",
