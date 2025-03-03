@@ -1,8 +1,8 @@
-import React from 'react';
-import './Services.css'; // Import the external CSS
+import React from "react";
+import "./Services.css"; // Import the external CSS
 
 const Services = () => {
-  const phoneNumbers = ['+919080076738', '+917603994107', '+918903123944']; // Your numbers
+  const phoneNumbers = ["+917603994107", "+918903123944"]; // Your numbers
 
   return (
     <div className="services-container">
@@ -10,7 +10,9 @@ const Services = () => {
       <ul className="services-list">
         {phoneNumbers.map((number, index) => (
           <li key={index}>
-            <a href={`tel:${number}`} className="phone-button">{number}</a>
+            <a href={`tel:${number}`} className="phone-button">
+              {number}
+            </a>
           </li>
         ))}
       </ul>
