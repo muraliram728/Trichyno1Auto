@@ -3,6 +3,7 @@ import "./Login.css";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../../firebase/config";
 import { useNavigate } from "react-router-dom";
+import Logo from "../../assets/images/TRYNO1AUTO LOGO.jpeg";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -15,7 +16,11 @@ const Login = () => {
     setError(null);
 
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = userCredential.user;
 
       console.log("User signed in:", user.uid);
@@ -56,12 +61,14 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               required
             />
-            <button type="submit" className="signin">Log In</button>
+            <button type="submit" className="signin">
+              Log In
+            </button>
             {error && <p className="error-message">{error}</p>}
           </form>
         </div>
         <div className="auth-image">
-          <img src="https://cdn.dribbble.com/users/1732920/screenshots/4094664/media/2861480b71d487d8f7a2c5ebe333c483.jpg?resize=400x0" alt="Login Visual" />
+          <img src={Logo} alt="Login Visual" />
         </div>
       </div>
     </div>
