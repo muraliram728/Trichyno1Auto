@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
-import "./cost.css"
+import "./cost.css";
 
 const Cost = () => {
   const [pricingDetails, setPricingDetails] = useState(null); // Store price details
@@ -35,12 +35,12 @@ const Cost = () => {
       ) : (
         <div className="price-list">
           <div className="price-card">
-            <h3>Cost per 1 Km</h3>
-            <p>₹{pricingDetails.pricePer1Km}</p>
+            <h3>Minimum price 1.5 Km</h3>
+            <p>₹{pricingDetails.pricePerKm}</p>
           </div>
           <div className="price-card">
-            <h3>Cost per Km</h3>
-            <p>₹{pricingDetails.pricePerKm}</p>
+            <h3>Cost per 1 Km</h3>
+            <p>₹{pricingDetails.pricePer1Km}</p>
           </div>
           <div className="price-card">
             <h3>Waiting Fee</h3>

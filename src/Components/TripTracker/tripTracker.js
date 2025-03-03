@@ -350,7 +350,7 @@ const TripTracker = () => {
             <h2>Price Details</h2>
             {currentUser && <p>Welcome, {currentUserName}!</p>}
             <div className="trip-detail">
-              <span className="label">Minimum Price per km:</span>
+              <span className="label">Minimum Price 1.5 km:</span>
               <span className="value">
                 ₹{currentPricePerKm.toFixed(2)} ({isNight ? "Night" : "Day"})
               </span>
