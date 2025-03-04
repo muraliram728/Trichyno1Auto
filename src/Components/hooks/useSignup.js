@@ -6,12 +6,30 @@ import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 export const useSignup = () => {
   const [error, setError] = useState(null);
 
-  const signup = async ({ fname, lname, email, password,displayName, isAdmin = false, members = "no" , code, mobileNo = "", altMobileNo = "", aadhaarCardNo = "", address = "",license}) => {
+  const signup = async ({
+    fname,
+    lname,
+    email,
+    password,
+    displayName,
+    isAdmin = false,
+    members = "no",
+    code,
+    mobileNo = "",
+    altMobileNo = "",
+    aadhaarCardNo = "",
+    address = "",
+    license,
+  }) => {
     setError(null);
 
     try {
       // Create user in Firebase Auth
-      const response = await createUserWithEmailAndPassword(auth, email, password);
+      const response = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const user = response.user;
 
       // Update display name in Firebase Auth
@@ -24,14 +42,14 @@ export const useSignup = () => {
         lname,
         license,
         email,
-        isAdmin : false, // Admin flag
+        isAdmin: false, // Admin flag
         displayName: displayName,
         members,
         code,
-        mobileNo, 
-        altMobileNo, 
+        mobileNo,
+        altMobileNo,
         aadhaarCardNo,
-        address, 
+        address,
         createdAt: serverTimestamp(), // Server-generated timestamp
       });
       console.log("User successfully signed up and signed in:", user.uid);
