@@ -40,18 +40,10 @@ const TripTracker = () => {
 
     // Check if the user is logged in
     if (user) {
-      console.log("Current User Details:");
-      console.log(`DisplayName: ${user.displayName}`);
-      console.log(`Email: ${user.email}`);
-      console.log(`UID: ${user.uid}`);
-      console.log(`Photo URL: ${user.photoURL}`);
-      console.log(`code: ${user.code}`);
-
       setCurrentUser(user); // Set current user details
       setCurrentUserName(user.displayName);
       setCode(user.code);
     } else {
-      console.log("No user is logged in.");
       setCurrentUser(null); // Clear user data if no one is logged in
     }
     const fetchPrices = async () => {
@@ -63,7 +55,6 @@ const TripTracker = () => {
           const priceData = priceDoc.data();
 
           if (priceData.pricePerKm !== undefined) {
-            console.log(`Fetched Price per Km: ₹${priceData.pricePerKm}`);
             setPricePerKm(priceData.pricePerKm);
           } else {
             console.warn("Price per km not found in Firestore.");
@@ -103,7 +94,6 @@ const TripTracker = () => {
 
         if (userDoc.exists()) {
           const userData = userDoc.data();
-          console.log(`Fetched Membership Status: ${userData.members}`);
 
           if (userData.members === "yes") {
             setIsMember(true); // Show component
@@ -145,7 +135,6 @@ const TripTracker = () => {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     const distanceInMeters = R * c * 1000; // Convert to meters
 
-    console.log(`Calculated Distance: ${distanceInMeters.toFixed(2)} meters`);
     return distanceInMeters;
   };
 
@@ -172,14 +161,12 @@ const TripTracker = () => {
     const id = navigator.geolocation.watchPosition(
       (position) => {
         const { latitude, longitude, speed } = position.coords;
-        console.log("New Position:", latitude, longitude, "Speed:", speed);
 
         setLastPosition((prevPosition) => {
           gpsUpdateCount++;
 
           // 🚨 Ignore first 3 GPS updates to prevent drift
           if (gpsUpdateCount <= 3) {
-            console.log("Ignoring first few GPS updates...");
             return { lat: latitude, lon: longitude };
           }
 
@@ -196,15 +183,11 @@ const TripTracker = () => {
           // 🚨 **Fix GPS Drift Issues**
           if (distMeters < 10) {
             // Ignore changes less than 10 meters
-            console.log("Ignoring small movement (drift).");
             return prevPosition;
           }
 
-          console.log(`Movement detected. Distance: ${distKm.toFixed(3)} km`);
-
           setDistance((prevDistance) => {
             const newDistance = prevDistance + distKm;
-            console.log(`Updated Distance: ${newDistance.toFixed(3)} km`);
 
             let newAmount;
             if (newDistance <= 1.5) {
@@ -216,7 +199,6 @@ const TripTracker = () => {
             }
 
             newAmount = parseFloat(newAmount.toFixed(2));
-            console.log(`Updated Amount: ₹${newAmount}`);
             setAmount(newAmount);
 
             return newDistance;
@@ -347,7 +329,7 @@ const TripTracker = () => {
       {isMember ? (
         <>
           <div className="trip-tracker">
-            <h2>Price Details</h2>
+            <h2 style={{ color: "white" }}>Price Details</h2>
             {currentUser && <p>Welcome, {currentUserName}!</p>}
             <div className="trip-detail">
               <span className="label">Minimum Price 1.5 km:</span>
