@@ -12,6 +12,7 @@ import TripTracker from "./Components/TripTracker/tripTracker";
 import Service from "./Components/Services/services";
 import Member from "./Components/Member/member";
 import About from "./Components/About/about";
+import Safe from "./Components/Safe/safe";
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
             <Route path="/triptracker" element={<TripTracker />} />
             <Route path="/service" element={<Service />} />
             <Route path="/member" element={<Member />} />
+            <Route path="/safe" element={<Safe />} />
           </Routes>
         </div>
         <Footer />
