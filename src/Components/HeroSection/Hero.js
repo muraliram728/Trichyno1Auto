@@ -3,7 +3,7 @@ import "./Herostyle.css";
 import { useNavigate } from "react-router-dom";
 import lowcost from "../../assets/images/lowcost.jpg";
 import safe from "../../assets/images/safe.webp";
-import auto from "../../assets/images/auto.webp";
+import auto from "../../assets/images/auto.png";
 import service from "../../assets/images/service.png";
 import customer from "../../assets/images/customer.jpg";
 import admin from "../../assets/images/admin.jpg";
