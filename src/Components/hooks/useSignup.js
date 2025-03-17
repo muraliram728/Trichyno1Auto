@@ -7,8 +7,8 @@ export const useSignup = () => {
   const [error, setError] = useState(null);
 
   const signup = async ({
-    fname,
-    lname,
+    firstName,
+    lastName,
     email,
     password,
     displayName,
@@ -33,13 +33,13 @@ export const useSignup = () => {
       const user = response.user;
 
       // Update display name in Firebase Auth
-      await updateProfile(user, { displayName: `${fname} ${lname}` });
+      await updateProfile(user, { displayName: `${firstName} ${lastName}` });
 
       // Save user details in Firestore
       const docRef = doc(db, "users", user.uid);
       await setDoc(docRef, {
-        fname,
-        lname,
+        firstName,
+        lastName,
         license,
         email,
         isAdmin: false, // Admin flag

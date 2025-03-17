@@ -15,8 +15,8 @@ import "./Signup.css";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
-    fname: "",
-    lname: "",
+    firstName: "",
+    lastName: "",
     license: "",
     email: "",
     code: "",
@@ -52,7 +52,7 @@ const Signup = () => {
     try {
       await signup({
         ...formData,
-        displayName: `${formData.fname} ${formData.lname}`,
+        displayName: `${formData.firstName} ${formData.lastName}`,
         isAdmin: true,
       });
       setShowAlert(true);
@@ -73,8 +73,8 @@ const Signup = () => {
         <Box component="form" onSubmit={handleSubmit} noValidate>
           <Grid container spacing={2}>
             {[
-              { name: "fname", label: "First Name" },
-              { name: "lname", label: "Last Name" },
+              { name: "firstName", label: "First Name" },
+              { name: "lastName", label: "Last Name" },
               { name: "license", label: "License No" },
               { name: "email", label: "Email", type: "email" },
               { name: "code", label: "Code" },
