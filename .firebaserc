@@ -1,5 +1,7 @@
 {
   "projects": {
-    "default": "trichy-no-1-auto"
-  }
+    "prod": "trichyno1-auto"
+  },
+  "targets": {},
+  "etags": {}
 }
